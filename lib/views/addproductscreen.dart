@@ -66,6 +66,66 @@ class _AddProductScreenState extends State<AddProductScreen> {
             const SizedBox(
               height: 10,
             ),
+            Obx(() {
+              return Column(
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      await con.pickImage();
+                    },
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: con.imageFile.value != null
+                                ? Colors.green
+                                : Colors.grey,
+                            width: 2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black,
+                              spreadRadius: 2,
+                              blurRadius: 10,
+                            ),
+                          ]),
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(7),
+                          child: con.imageFile.value != null
+                              ? Image.file(
+                                  con.imageFile.value!,
+                                  fit: BoxFit.cover,
+                                )
+                              : const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Center(
+                                      child: Icon(Icons.add_a_photo),
+                                    ),
+                                    Text(
+                                      "Tap To Select a image",
+                                      style: TextStyle(fontSize: 15),
+                                    )
+                                  ],
+                                )),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    con.selectedFileName.value.isNotEmpty
+                        ? con.selectedFileName.value
+                        : "Tap To Select Image..",
+                    style: TextStyle(fontSize: 15),
+                  )
+                ],
+              );
+            }),
             ElevatedButton(
                 onPressed: () {
                   con.addProduct(widget.catname);

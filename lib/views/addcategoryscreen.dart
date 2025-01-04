@@ -14,17 +14,13 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   Widget build(BuildContext context) {
     final con = Get.put(CategoryController());
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Create Category"),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           children: [
-            const Text(
-              "Create Category",
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
             TextField(
               controller: con.categorycontroller,
               decoration: const InputDecoration(hintText: "Add category name"),

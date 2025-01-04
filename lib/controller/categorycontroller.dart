@@ -1,6 +1,9 @@
 // ignore_for_file: avoid_print, invalid_use_of_protected_member
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -56,9 +59,8 @@ class CategoryController extends GetxController {
 
   // Update category name
   Future<void> updatecategory(String catId, String newCatName) async {
-    String? cname = categorycontroller.text.trim();
     try {
-      if (newCatName.isEmpty || cname.isEmpty) {
+      if (newCatName.isEmpty) {
         Get.snackbar("Error", "New category name cannot be empty.");
       } else {
         await FirebaseFirestore.instance
