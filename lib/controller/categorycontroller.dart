@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, invalid_use_of_protected_member
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -52,19 +54,26 @@ class CategoryController extends GetxController {
     }
   }
 
+  // Update category name
   Future<void> updatecategory(String catId, String newCatName) async {
+    String? cname = categorycontroller.text.trim();
     try {
-      await firebase
+      if (newCatName.isEmpty || cname.isEmpty) {
+        Get.snackbar("Error", "New category name cannot be empty.");
+        return;
+      }
+
+      await FirebaseFirestore.instance
           .collection('categories')
           .doc(catId)
           .update({'name': newCatName});
-      fetchdata();
+      fetchdata(); // Refresh the data list
 
-      print("category update successfully.....");
-      Get.snackbar("Success", "category updated successfully....");
+      print("Category updated successfully.");
+      Get.snackbar("Success", "Category updated successfully.");
     } catch (e) {
-      print(e.toString());
-      Get.snackbar("Error", "error in updation......");
+      print("Error updating category: ${e.toString()}");
+      Get.snackbar("Error", "Error in category update.");
     }
   }
 

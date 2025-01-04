@@ -18,25 +18,25 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           children: [
-            Text(
+            const Text(
               "Create Category",
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             TextField(
               controller: con.categorycontroller,
               decoration: const InputDecoration(hintText: "Add category name"),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             ElevatedButton(
                 onPressed: () {
                   con.addCategory();
                 },
-                child: Text("Create"))
+                child: const Text("Create"))
           ],
         ),
       ),

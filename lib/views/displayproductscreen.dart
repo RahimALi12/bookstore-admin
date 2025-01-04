@@ -1,15 +1,24 @@
+import 'package:adminpanel/controller/categorycontroller.dart';
+import 'package:adminpanel/views/addproductscreen.dart';
 import 'package:adminpanel/views/productcard.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 
 class ProductListPage extends StatelessWidget {
-  final String catname; // Category name passed to this page
+  const ProductListPage({super.key, required this.catname});
 
-  ProductListPage({required this.catname});
+  final String catname; // Category name passed to this page
 
   @override
   Widget build(BuildContext context) {
+    final con = Get.put(CategoryController());
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () {
+            Get.to(AddProductScreen(catname: catname));
+          }),
       appBar: AppBar(
         title: Text('$catname Products'),
       ),
@@ -21,7 +30,7 @@ class ProductListPage extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -29,7 +38,7 @@ class ProductListPage extends StatelessWidget {
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No products available.'));
+            return const Center(child: Text('No products available.'));
           }
 
           // List of products retrieved from Firestore

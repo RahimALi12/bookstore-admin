@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, invalid_use_of_protected_member
+
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -41,10 +43,10 @@ class ProductControlller extends GetxController {
   }
 
   Future<void> addProduct(String catname) async {
-    double? price = double.tryParse(ppriceController.text);
-    double? quantity = double.tryParse(pquantityController.text);
     String? pname = pnameController.text.trim();
     String? pdesc = pdescController.text.trim();
+    double? price = double.tryParse(ppriceController.text);
+    double? quantity = double.tryParse(pquantityController.text);
 
     if (catname.isEmpty ||
         pname.isEmpty ||
@@ -64,6 +66,7 @@ class ProductControlller extends GetxController {
         'pdesc': pdesc
       });
       Get.snackbar("Success", "Product Added!!");
+      Get.back(closeOverlays: true);
     } catch (e) {
       log(e.toString());
       Get.snackbar("Error", "Failed to add product!");
@@ -101,6 +104,7 @@ class ProductControlller extends GetxController {
         'pdesc': pdesc,
       });
       Get.snackbar("Success", "Product Updated!");
+      Get.back(closeOverlays: true);
     } catch (e) {
       log(e.toString());
       Get.snackbar("Error", "Failed to update product!");
@@ -119,6 +123,7 @@ class ProductControlller extends GetxController {
       // Delete the product
       await productDoc.delete();
       Get.snackbar("Success", "Product Deleted!");
+      Get.back(closeOverlays: true);
     } catch (e) {
       log(e.toString());
       Get.snackbar("Error", "Failed to delete product!");

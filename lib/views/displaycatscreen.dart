@@ -1,6 +1,6 @@
 import 'package:adminpanel/controller/categorycontroller.dart';
 import 'package:adminpanel/views/addcategoryscreen.dart';
-import 'package:adminpanel/views/addproductscreen.dart';
+import 'package:adminpanel/views/displayproductscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -25,7 +25,7 @@ class DisplayCatScreen extends StatelessWidget {
               }
               return ListView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: con.categorydata.length,
                   itemBuilder: (context, index) {
                     var category = con.categorydata[index];
@@ -34,21 +34,19 @@ class DisplayCatScreen extends StatelessWidget {
                       children: [
                         Text(
                           category['name'],
-                          style: TextStyle(
-                              height: 3,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            height: 3,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        SizedBox(
-                          width: 20,
+                        const SizedBox(width: 20),
+                        IconButton(
+                          onPressed: () {
+                            Get.to(ProductListPage(catname: category['name']));
+                          },
+                          icon: const Icon(Icons.remove_red_eye),
                         ),
-                        ElevatedButton(
-                            onPressed: () {
-                              Get.to(AddProductScreen(
-                                mylist: category,
-                              ));
-                            },
-                            child: Text("Add Category")),
                         IconButton(
                             onPressed: () async {
                               final newName = await showDialog(
@@ -57,7 +55,7 @@ class DisplayCatScreen extends StatelessWidget {
                                     final controller = TextEditingController(
                                         text: category['name']);
                                     return AlertDialog(
-                                      title: Text("Edit Category"),
+                                      title: const Text("Edit Category"),
                                       content: TextField(
                                         controller: controller,
                                       ),
@@ -65,11 +63,11 @@ class DisplayCatScreen extends StatelessWidget {
                                         TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(context),
-                                            child: Text("Cancel")),
+                                            child: const Text("Cancel")),
                                         TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(context),
-                                            child: Text("Save")),
+                                            child: const Text("Save")),
                                       ],
                                     );
                                   });
@@ -78,11 +76,11 @@ class DisplayCatScreen extends StatelessWidget {
                                 await con.updatecategory(cId, newName.trim());
                               }
                             },
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.edit,
                               color: Colors.blue,
                             )),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         IconButton(
@@ -90,25 +88,25 @@ class DisplayCatScreen extends StatelessWidget {
                               final confirmed = await showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                        title: Text("Delete Category"),
-                                        content: Text(
+                                        title: const Text("Delete Category"),
+                                        content: const Text(
                                             "Are you sure you want to delete category ?"),
                                         actions: [
                                           TextButton(
                                               onPressed: () =>
                                                   Navigator.pop(context, false),
-                                              child: Text("Cancel")),
+                                              child: const Text("Cancel")),
                                           TextButton(
                                               onPressed: () =>
                                                   Navigator.pop(context, true),
-                                              child: Text("Delete")),
+                                              child: const Text("Delete")),
                                         ],
                                       ));
                               if (confirmed == true) {
                                 await con.deleteCategory(cId);
                               }
                             },
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.delete,
                               color: Colors.red,
                             )),
@@ -116,14 +114,14 @@ class DisplayCatScreen extends StatelessWidget {
                     );
                   });
             }),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             ElevatedButton(
                 onPressed: () {
-                  Get.to(AddCategoryScreen());
+                  Get.to(const AddCategoryScreen());
                 },
-                child: Text("Create Category")),
+                child: const Text("Create Category")),
           ],
         ),
       ),

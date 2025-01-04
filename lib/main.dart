@@ -1,6 +1,4 @@
-import 'package:adminpanel/controller/productcontroller.dart';
 import 'package:adminpanel/views/displaycatscreen.dart';
-import 'package:adminpanel/views/displayproductscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
@@ -19,11 +17,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final con = Get.put(ProductControlller());
-
-    return GetMaterialApp(
+    return const GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ProductListPage(catname: catname),
+      home: DisplayCatScreen(),
     );
   }
 }
