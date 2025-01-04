@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:adminpanel/controller/categorycontroller.dart';
 import 'package:adminpanel/views/addcategoryscreen.dart';
 import 'package:adminpanel/views/displayproductscreen.dart';
@@ -65,8 +67,13 @@ class DisplayCatScreen extends StatelessWidget {
                                                 Navigator.pop(context),
                                             child: const Text("Cancel")),
                                         TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
+                                            onPressed: () {
+                                              con.updatecategory(
+                                                cId,
+                                                controller.text,
+                                              );
+                                              Navigator.pop(context);
+                                            },
                                             child: const Text("Save")),
                                       ],
                                     );

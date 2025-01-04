@@ -60,17 +60,17 @@ class CategoryController extends GetxController {
     try {
       if (newCatName.isEmpty || cname.isEmpty) {
         Get.snackbar("Error", "New category name cannot be empty.");
-        return;
+      } else {
+        await FirebaseFirestore.instance
+            .collection('categories')
+            .doc(catId)
+            .update({'name': newCatName});
+
+        fetchdata();
+
+        print("Category updated successfully.");
+        Get.snackbar("Success", "Category updated successfully.");
       }
-
-      await FirebaseFirestore.instance
-          .collection('categories')
-          .doc(catId)
-          .update({'name': newCatName});
-      fetchdata(); // Refresh the data list
-
-      print("Category updated successfully.");
-      Get.snackbar("Success", "Category updated successfully.");
     } catch (e) {
       print("Error updating category: ${e.toString()}");
       Get.snackbar("Error", "Error in category update.");
