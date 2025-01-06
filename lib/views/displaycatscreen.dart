@@ -1,7 +1,9 @@
-import 'dart:js_interop';
+// import 'dart:js_interop';
 
 import 'package:adminpanel/controller/categorycontroller.dart';
 import 'package:adminpanel/views/addcategoryscreen.dart';
+import 'package:adminpanel/views/createauthor.dart';
+import 'package:adminpanel/views/displayautscreen.dart';
 import 'package:adminpanel/views/displayproductscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -129,6 +131,16 @@ class DisplayCatScreen extends StatelessWidget {
                   Get.to(const AddCategoryScreen());
                 },
                 child: const Text("Create Category")),
+            ElevatedButton(
+                onPressed: () {
+                  Get.to(const AddAuthorScreen());
+                },
+                child: const Text("Authors")),
+            ElevatedButton(
+                onPressed: () {
+                  Get.to(AuthorListScreen());
+                },
+                child: const Text("Authors List")),
           ],
         ),
       ),

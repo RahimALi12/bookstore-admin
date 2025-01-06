@@ -34,7 +34,7 @@ class LoginController extends GetxController {
         String role = userDoc['role'];
 
         if (role == 'admin') {
-          Get.to(() => DisplayCatScreen());
+          Get.to(() => const DisplayCatScreen());
         } else {
           Get.snackbar("Error", "Wrong credentials");
         }

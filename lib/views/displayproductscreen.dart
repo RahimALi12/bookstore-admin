@@ -1,6 +1,7 @@
-import 'package:adminpanel/controller/categorycontroller.dart';
+// import 'package:adminpanel/controller/categorycontroller.dart';
 import 'package:adminpanel/views/addproductscreen.dart';
 import 'package:adminpanel/views/productcard.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -12,7 +13,7 @@ class ProductListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final con = Get.put(CategoryController());
+    // final con = Get.put(CategoryController());
     return Scaffold(
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
@@ -53,14 +54,17 @@ class ProductListPage extends StatelessWidget {
               var pprice = product['pprice'];
               var pquantity = product['pquantity'];
               var pdesc = product['pdesc'];
+              var imagename = product['imagename'];
+              // var imagename = product['imagename']; // Retrieve the image URL
 
               return ProductCard(
                 productId: productId,
-                pname: pname,
-                pprice: pprice,
-                pquantity: pquantity,
-                pdesc: pdesc,
+                pname: pname ?? 'Unknown',
+                pprice: pprice ?? 0.0,
+                pquantity: pquantity ?? 0.0,
                 catname: catname,
+                pdesc: pdesc ?? 'No description',
+                imagename: imagename ?? '', // Default to empty string if null
               );
             },
           );

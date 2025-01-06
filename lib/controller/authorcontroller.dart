@@ -10,15 +10,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ProductController extends GetxController {
+class AuthorController extends GetxController {
   final FirebaseFirestore firebase = FirebaseFirestore.instance;
-  final TextEditingController pnameController = TextEditingController();
-  final TextEditingController ppriceController = TextEditingController();
-  final TextEditingController pquantityController = TextEditingController();
-  final TextEditingController pdescController = TextEditingController();
-  var products = <DocumentSnapshot>[].obs;
+  final TextEditingController authnameController = TextEditingController();
+  var authors = <DocumentSnapshot>[].obs;
   var isloading = false.obs;
-  var productdata = <Map<String, dynamic>>[].obs;
+  var authorsdata = <Map<String, dynamic>>[].obs;
+  var authorsList = <Map<String, dynamic>>[].obs;
 
   var selectedFile = Rxn<File>();
   var selectedFilesByte = Rxn<List<int>>();
@@ -98,23 +96,28 @@ class ProductController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchData();
+    fetchAuthors();
   }
 
-  Future<void> fetchData() async {
+// Observable list of authors
+  // var authorsList = <Map<String, String>>[].obs;
+
+  Future<void> fetchAuthors() async {
     try {
       isloading.value = true;
-      final QuerySnapshot data = await firebase.collection("products").get();
+      final QuerySnapshot data = await firebase.collection("authors").get();
+      // Har author ka data loop mein fetch kar rahe hain
+      authorsList.clear();
       if (data.docs.isNotEmpty) {
         List<Map<String, dynamic>> datalist = [];
         for (var doc in data.docs) {
           datalist.add(doc.data() as Map<String, dynamic>);
         }
-        productdata.value = datalist;
-        products.value = data.docs;
+        authorsdata.value = datalist;
+        authors.value = data.docs;
         isloading.value = false;
 
-        print(productdata.value.toString());
+        print(authorsdata.value.toString());
       }
     } catch (e) {
       print(e.toString());
@@ -123,16 +126,13 @@ class ProductController extends GetxController {
 
   // Clear text controllers
   void clearControllers() {
-    pnameController.clear();
-    ppriceController.clear();
-    pquantityController.clear();
-    pdescController.clear();
+    authnameController.clear();
     selectedFile.value = null;
     selectedFilesByte.value = null;
     selectedFileName.value = '';
   }
 
-  Future<void> addProduct(String catname) async {
+  Future<void> addAuthor(String authorName, String imageName) async {
     // Upload image to Cloudinary
     final imageUrl = await uploadImagetocloudinary();
 
@@ -145,47 +145,37 @@ class ProductController extends GetxController {
         imageUrl ?? defaultImagePath; // Default image path
 
     // Get input values
-    String? pname = pnameController.text.trim();
-    String? pdesc = pdescController.text.trim();
-    double? price = double.tryParse(ppriceController.text);
-    double? quantity = double.tryParse(pquantityController.text);
+    String? authorName = authnameController.text.trim();
 
     // Validate inputs
-    if (catname.isEmpty ||
-        pname.isEmpty ||
-        pdesc.isEmpty ||
-        price == null ||
-        quantity == null) {
+    if (authorName.isEmpty) {
       Get.snackbar("Error", "Please provide valid details");
       return;
     }
 
     try {
       // Reference to product collection in Firebase
-      CollectionReference productCollection =
-          firebase.collection('categories').doc(catname).collection('products');
+      DocumentReference authorRef =
+          firebase.collection('authors').doc(authorName);
 
       // Add product data to Firebase
-      await productCollection.add({
-        'pname': pname,
-        'pprice': price,
-        'pquantity': quantity,
-        'pdesc': pdesc,
+      await authorRef.set({
+        'auname': authorName,
         'imagename':
             finalImagePath, // Use either uploaded image URL or default path
       });
 
       // Show success message and navigate back
-      Get.snackbar("Success", "Product Added!!");
+      Get.snackbar("Success", "Author Added!!");
       Get.back(closeOverlays: true);
     } catch (e) {
       log(e.toString());
-      Get.snackbar("Error", "Failed to add product!");
+      Get.snackbar("Error", "Failed to add Author!");
     }
   }
 
-  Future<void> editProduct(
-      String catname, String productId, String currentImageUrl) async {
+  Future<void> editAuthor(
+      String autname, String authorId, String currentImageUrl) async {
     String? imageUrl;
 
     // If a new image is selected, upload it
@@ -202,31 +192,26 @@ class ProductController extends GetxController {
     }
 
     // Collect form data
-    double? price = double.tryParse(ppriceController.text);
-    double? quantity = double.tryParse(pquantityController.text);
-    String? pname = pnameController.text.trim();
-    String? pdesc = pdescController.text.trim();
+
+    String? authname = authnameController.text.trim();
 
     // Validation
-    if (pname.isEmpty || pdesc.isEmpty || price == null || quantity == null) {
+    if (authname.isEmpty) {
       Get.snackbar("Error", "Please provide valid details");
       return;
     }
 
     try {
       // Reference to the specific product document
-      DocumentReference productDoc = firebase
-          .collection('categories')
-          .doc(catname)
-          .collection('products')
-          .doc(productId);
+      DocumentReference authorDoc = firebase
+          .collection('authors')
+          .doc(autname)
+          .collection('author')
+          .doc(authorId);
 
       // Prepare the data for update
       Map<String, dynamic> updateData = {
-        'pname': pname,
-        'pprice': price,
-        'pquantity': quantity,
-        'pdesc': pdesc,
+        'auname': authname,
       };
 
       // If a new image was uploaded, include the new image URL
@@ -235,32 +220,32 @@ class ProductController extends GetxController {
       }
 
       // Update the product details in Firebase
-      await productDoc.update(updateData);
+      await authorDoc.update(updateData);
 
-      Get.snackbar("Success", "Product Updated!");
+      Get.snackbar("Success", "Author Updated!");
       Get.back(closeOverlays: true); // Close the edit page
     } catch (e) {
       log(e.toString());
-      Get.snackbar("Error", "Failed to update product!");
+      Get.snackbar("Error", "Failed to update Author!");
     }
   }
 
-  Future<void> deleteProduct(String catname, String productId) async {
+  Future<void> deleteAuthor(String autname, String authorId) async {
     try {
       // Reference to the specific product document
-      DocumentReference productDoc = firebase
-          .collection('categories')
-          .doc(catname)
-          .collection('products')
-          .doc(productId);
+      DocumentReference authorDoc = firebase
+          .collection('authors')
+          .doc(autname)
+          .collection('author')
+          .doc(authorId);
 
       // Delete the product
-      await productDoc.delete();
-      Get.snackbar("Success", "Product Deleted!");
+      await authorDoc.delete();
+      Get.snackbar("Success", "Author Deleted!");
       Get.back(closeOverlays: true);
     } catch (e) {
       log(e.toString());
-      Get.snackbar("Error", "Failed to delete product!");
+      Get.snackbar("Error", "Failed to delete author!");
     }
   }
 }

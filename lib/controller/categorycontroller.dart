@@ -1,9 +1,10 @@
 // ignore_for_file: avoid_print, invalid_use_of_protected_member
 
-import 'dart:io';
+// import 'dart:io';
 
+import 'package:adminpanel/views/displaycatscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
+// import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -46,14 +47,25 @@ class CategoryController extends GetxController {
       DocumentReference categoryRef =
           firebase.collection('categories').doc(categorycontroller.text.trim());
       DocumentSnapshot categoryDoc = await categoryRef.get();
+
       if (!categoryDoc.exists) {
+        // If category doesn't exist, create it
         await categoryRef.set({'name': categorycontroller.text.trim()});
         Get.snackbar("Success", "Category Added!!");
+
+        categorycontroller.clear(); // Clear the text field
+
+        // Navigate to the display categories page
+        Get.off(() => const DisplayCatScreen());
       } else {
+        // If category already exists
         Get.snackbar("Error", "Category already exists");
       }
+
+      fetchdata(); // Fetch the updated categories
     } catch (e) {
       print(e.toString());
+      Get.snackbar("Error", "Something went wrong");
     }
   }
 
