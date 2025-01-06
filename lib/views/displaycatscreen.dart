@@ -138,7 +138,7 @@ class DisplayCatScreen extends StatelessWidget {
                 child: const Text("Authors")),
             ElevatedButton(
                 onPressed: () {
-                  Get.to(AuthorListScreen());
+                  Get.to(const AuthorListScreen());
                 },
                 child: const Text("Authors List")),
           ],

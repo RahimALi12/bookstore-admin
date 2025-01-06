@@ -70,7 +70,7 @@ class CategoryController extends GetxController {
   }
 
   // Update category name
-  Future<void> updatecategory(String catId, String newCatName) async {
+  Future<void> updatecategory(String catId, String newCatName ) async {
     try {
       if (newCatName.isEmpty) {
         Get.snackbar("Error", "New category name cannot be empty.");

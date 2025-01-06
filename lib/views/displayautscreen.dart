@@ -28,7 +28,7 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // 2 items per row
               crossAxisSpacing: 10, // space between items horizontally
               mainAxisSpacing: 10, // space between items vertically
@@ -105,7 +105,7 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Navigate to Add Author screen
-          Get.to(AddAuthorScreen());
+          Get.to(const AddAuthorScreen());
         },
         child: const Icon(Icons.add),
       ),

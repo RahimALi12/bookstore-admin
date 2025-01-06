@@ -15,7 +15,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
     final con = Get.put(CategoryController());
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create Category"),
+        title: const Text("Create Category"),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),

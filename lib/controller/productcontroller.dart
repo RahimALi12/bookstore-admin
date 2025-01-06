@@ -184,28 +184,36 @@ class ProductController extends GetxController {
     }
   }
 
-  Future<void> editProduct(
-      String catname, String productId, String currentImageUrl) async {
-    String? imageUrl;
+  Future<void> editProduct(String cattname, String producttId, String proName,
+      double? pprice, double? pquantity, String pdescc) async {
+    // String? imageUrl;
 
-    // If a new image is selected, upload it
-    if (selectedFile.value != null) {
-      imageUrl = await uploadImagetocloudinary();
-      if (imageUrl == null) {
-        Get.snackbar("Error", "Failed to upload image");
-        return;
-      }
-    } else {
-      // If no new image selected, use the current image URL
-      imageUrl =
-          currentImageUrl; // Keep the old image if no new one is selected
-    }
+    // // If a new image is selected, upload it
+    // if (selectedFile.value != null) {
+    //   imageUrl = await uploadImagetocloudinary();
+    //   if (imageUrl == null) {
+    //     Get.snackbar("Error", "Failed to upload image");
+    //     return;
+    //   }
+    // } else {
+    //   // If no new image selected, use the current image URL
+    //   imageUrl =
+    //       currentImageUrl; // Keep the old image if no new one is selected
+    // }
 
     // Collect form data
-    double? price = double.tryParse(ppriceController.text);
-    double? quantity = double.tryParse(pquantityController.text);
-    String? pname = pnameController.text.trim();
-    String? pdesc = pdescController.text.trim();
+    double? price = pprice;
+    double? quantity = pquantity;
+    String? pname = proName;
+    String? pdesc = pdescc;
+    final imageUrl = await uploadImagetocloudinary();
+
+    // Default image URL (if no image is uploaded)
+    const String defaultImagePath =
+        'assets/images/logo.png'; // Path to your logo
+
+    // Use the default image if no image is uploaded
+    final String finalImagePath = imageUrl ?? defaultImagePath;
 
     // Validation
     if (pname.isEmpty || pdesc.isEmpty || price == null || quantity == null) {
@@ -217,22 +225,22 @@ class ProductController extends GetxController {
       // Reference to the specific product document
       DocumentReference productDoc = firebase
           .collection('categories')
-          .doc(catname)
+          .doc(cattname)
           .collection('products')
-          .doc(productId);
-
+          .doc(producttId);
       // Prepare the data for update
       Map<String, dynamic> updateData = {
         'pname': pname,
         'pprice': price,
         'pquantity': quantity,
         'pdesc': pdesc,
+        'imagename': finalImagePath,
       };
 
       // If a new image was uploaded, include the new image URL
-      if (imageUrl.isEmpty) {
-        updateData['imagename'] = imageUrl;
-      }
+      // if (imageUrl.isEmpty) {
+      //   updateData['imagename'] = imageUrl;
+      // }
 
       // Update the product details in Firebase
       await productDoc.update(updateData);
