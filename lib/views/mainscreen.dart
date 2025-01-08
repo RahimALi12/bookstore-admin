@@ -1,6 +1,6 @@
 import 'package:adminpanel/views/displayautscreen.dart';
 import 'package:adminpanel/views/displaycatscreen.dart';
-import 'package:adminpanel/views/displayproductscreen.dart';
+import 'package:adminpanel/views/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart'; // Profile Screen
 
@@ -16,8 +16,8 @@ class _MainScreenState extends State<MainScreen> {
 
   // Pages list
   final List<Widget> _pages = [
+    AdminHomePage(),
     const DisplayCatScreen(),
-    const ProductListPage(catname: 'catname'),
     const AuthorListScreen(),
     // const (),
   ];
