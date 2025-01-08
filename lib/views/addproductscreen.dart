@@ -1,7 +1,9 @@
 import 'package:adminpanel/controller/authorcontroller.dart';
 import 'package:adminpanel/controller/productcontroller.dart';
+import 'package:adminpanel/utils/formsutils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key, required this.catname});
@@ -16,20 +18,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
   void initState() {
     super.initState();
     final authcontroller = Get.put(AuthorController());
-    // Fetch authors when the screen is initialized
     if (authcontroller.authorsList.isEmpty) {
       authcontroller.fetchAuthors();
     }
   }
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   final authcontroller = Get.put(AuthorController());
-  //   authcontroller.authorsList.assignAll([
-  //     {'auname': 'Author 1', 'imagename': 'assets/images/logo.png'},
-  //     {'auname': 'Author 2', 'imagename': 'assets/images/logo.png'},
-  //   ]);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -37,25 +29,32 @@ class _AddProductScreenState extends State<AddProductScreen> {
     final authcontroller = Get.put(AuthorController());
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Product"),
+        title: Text(
+          "Add Product",
+          style: GoogleFonts.roboto(
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+              color: Color.fromARGB(228, 255, 255, 255)),
+        ),
+        backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
-        // Prevents overflow by allowing scrolling
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
             const SizedBox(height: 20),
             Text(
               widget.catname,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              style: headingTextStyle(),
             ),
             const SizedBox(height: 15),
             _buildTextField(
-                controller: con.pnameController, hintText: "Enter product"),
+                controller: con.pnameController,
+                hintText: "Enter product name"),
             const SizedBox(height: 15),
             _buildTextField(
                 controller: con.pdescController,
-                hintText: "Enter product desc..."),
+                hintText: "Enter product description"),
             const SizedBox(height: 15),
             _buildTextField(
                 controller: con.ppriceController,
@@ -63,46 +62,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
             const SizedBox(height: 10),
             _buildTextField(
                 controller: con.pquantityController,
-                hintText: "Enter product quantity..."),
+                hintText: "Enter product quantity"),
             const SizedBox(height: 10),
-            // Obx(() {
-            //   // Check if the authors list is still empty or loading
-            //   // if (authcontroller.authorsList.isEmpty) {
-            //   //   authcontroller.fetchAuthors(); // Fetch authors when empty
-            //   //   return const Center(
-            //   //       child:
-            //   //           CircularProgressIndicator()); // Show loading indicator while fetching
-            //   // }
-
-            //   // Return the Dropdown only when authors list is populated
-            //   return DropdownButton<String>(
-            //     hint: const Text('Select Author'),
-            //     value: con.selectedAuthor.value.isNotEmpty
-            //         ? con.selectedAuthor.value
-            //         : null,
-            //     onChanged: (selectedAuthor) {
-            //       con.selectedAuthor.value =
-            //           selectedAuthor ?? ''; // Save selected author
-            //     },
-            //     items: authcontroller.authorsList.map((author) {
-            //       return DropdownMenuItem<String>(
-            //         value: author['auname'],
-            //         child: Row(
-            //           children: [
-            //             Image.asset(
-            //               author['imagename'] ??
-            //                   'assets/images/logo.png', // Default image
-            //               width: 30,
-            //               height: 30,
-            //             ),
-            //             const SizedBox(width: 10),
-            //             Text(author['auname'] ?? "Default Author Name"),
-            //           ],
-            //         ),
-            //       );
-            //     }).toList(),
-            //   );
-            // }),
             Obx(() {
               if (authcontroller.isloading.value) {
                 return const Center(child: CircularProgressIndicator());
@@ -112,31 +73,38 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 return const Text("No authors available");
               }
 
-              return DropdownButton<String>(
-                hint: const Text('Select Author'),
-                value: con.selectedAuthor.value.isNotEmpty
+              // return DropdownButton<String>(
+              //   hint: const Text('Select Author'),
+              //   value: con.selectedAuthor.value.isNotEmpty
+              //       ? con.selectedAuthor.value
+              //       : null,
+              //   onChanged: (selectedAuthor) {
+              //     con.selectedAuthor.value = selectedAuthor ?? '';
+              //   },
+              //   items: authcontroller.authorsList.map((author) {
+              //     return DropdownMenuItem<String>(
+              //       value: author['auname'],
+              //       child: Row(
+              //         children: [
+              //           const SizedBox(width: 10),
+              //           Text(author['auname'] ?? "Default Author Name"),
+              //         ],
+              //       ),
+              //     );
+              //   }).toList(),
+              // );
+              return dropdownButtonStyle(
+                hintText: 'Select Author',
+                selectedValue: con.selectedAuthor.value.isNotEmpty
                     ? con.selectedAuthor.value
                     : null,
                 onChanged: (selectedAuthor) {
                   con.selectedAuthor.value = selectedAuthor ?? '';
                 },
-                items: authcontroller.authorsList.map((author) {
-                  return DropdownMenuItem<String>(
-                    value: author['auname'],
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        Text(author['auname'] ?? "Default Author Name"),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                authorsList: authcontroller.authorsList,
               );
             }),
-
-            SizedBox(
-              height: 50,
-            ),
+            const SizedBox(height: 20),
             Obx(() {
               return Column(
                 children: [
@@ -144,51 +112,34 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     onTap: () async {
                       await con.pickImage();
                     },
-                    child: Container(
-                      width: double.infinity, // Make it responsive
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: con.selectedFile.value != null
-                              ? Colors.green
-                              : Colors.grey,
-                          width: 2,
+                    child: Center(
+                      child: Container(
+                        width: 300,
+                        height: 60,
+                        decoration: imagePickerDecoration(
+                            con.selectedFile.value != null),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(7),
+                          child: con.selectedFile.value != null
+                              ? Image.file(con.selectedFile.value!,
+                                  fit: BoxFit.cover)
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Center(
+                                        child: Icon(Icons.add_a_photo)),
+                                    Text(
+                                      con.selectedFileName.value.isNotEmpty
+                                          ? con.selectedFileName.value
+                                          : "Tap to Select Image",
+                                      style: imagetext(),
+                                    ),
+                                  ],
+                                ),
                         ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black,
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(7),
-                        child: con.selectedFile.value != null
-                            ? Image.file(
-                                con.selectedFile.value!,
-                                fit: BoxFit.cover,
-                              )
-                            : const Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Center(child: Icon(Icons.add_a_photo)),
-                                  Text("Tap To Select a image",
-                                      style: TextStyle(fontSize: 15)),
-                                ],
-                              ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    con.selectedFileName.value.isNotEmpty
-                        ? con.selectedFileName.value
-                        : "Tap To Select Image..",
-                    style: const TextStyle(fontSize: 15),
                   ),
                 ],
               );
@@ -198,7 +149,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
               onPressed: () {
                 con.addProduct(widget.catname);
               },
-              child: const Text("Create Product"),
+              style: elevatedButtonStyle(),
+              child: Text(
+                "Create Product", // Button text
+                style: buttonTextStyle(), // Apply button text style here
+              ),
             ),
           ],
         ),
@@ -206,12 +161,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  // Custom method to avoid repeating code for text fields
   Widget _buildTextField(
       {required TextEditingController controller, required String hintText}) {
     return TextField(
       controller: controller,
-      decoration: InputDecoration(hintText: hintText),
+      decoration: inputFieldDecoration(hintText),
+      style: const TextStyle(
+          color: Colors.black87), // Dark text color for readability
     );
   }
 }

@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print, invalid_use_of_protected_member, prefer_const_constructors
 
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:adminpanel/utils/snackbarutils.dart';
 import 'package:http/http.dart' as http;
@@ -150,7 +149,11 @@ class ProductController extends GetxController {
 
   Future<void> addProduct(String catname) async {
     if (selectedAuthor.value.isEmpty) {
-      Get.snackbar('Error', 'Please select an author');
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Please Select an Author",
+        type: 'error',
+      );
       return;
     }
     // Upload image to Cloudinary
@@ -176,7 +179,11 @@ class ProductController extends GetxController {
         pdesc.isEmpty ||
         price == null ||
         quantity == null) {
-      Get.snackbar("Error", "Please provide valid details");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Please Provide Valid Details",
+        type: 'error',
+      );
       return;
     }
 
@@ -196,34 +203,52 @@ class ProductController extends GetxController {
             finalImagePath, // Use either uploaded image URL or default path
       });
 
+      fetchData();
+
       // Show success message and navigate back
-      Get.snackbar("Success", "Product Added!!");
+      SnackbarUtil.showSnackbar(
+        "Congratulations!",
+        "Product Added Successfully",
+        type: 'success',
+      );
+      await Future.delayed(
+          Duration(seconds: 2)); // Snackbar will display for 2 seconds
+
       Get.back(closeOverlays: true);
     } catch (e) {
-      log(e.toString());
-      Get.snackbar("Error", "Failed to add product!");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Failed to Add Product",
+        type: 'error',
+      );
     }
   }
 
-  Future<void> editProduct(String cattname, String producttId, String proName,
-      double? pprice, double? pquantity, String pdescc) async {
+  Future<void> editProduct(
+      String cattname,
+      String producttId,
+      String proName,
+      double? pprice,
+      double? pquantity,
+      String pdescc,
+      String selectedAuthor) async {
     // Collect form data
     double? price = pprice;
     double? quantity = pquantity;
     String? pname = proName;
     String? pdesc = pdescc;
-    // final imageUrl = await uploadImagetocloudinary();
-
-    // // Default image URL (if no image is uploaded)
-    // const String defaultImagePath =
-    //     'assets/images/logo.png'; // Path to your logo
-
-    // // Use the default image if no image is uploaded
-    // final String finalImagePath = imageUrl ?? defaultImagePath;
 
     // Validation
-    if (pname.isEmpty || pdesc.isEmpty || price == null || quantity == null) {
-      Get.snackbar("Error", "Please provide valid details");
+    if (pname.isEmpty ||
+        pdesc.isEmpty ||
+        price == null ||
+        quantity == null ||
+        selectedAuthor.isEmpty) {
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Please Provide Valid Details",
+        type: 'error',
+      );
       return;
     }
 
@@ -238,6 +263,9 @@ class ProductController extends GetxController {
       final existingData = authorSnapshot.data() as Map<String, dynamic>;
       final existingImageUrl = existingData['imagename'] ?? "";
 
+      final existingAuthor =
+          existingData['author'] ?? ""; // Get the current author
+
       // Upload the image if a new one is picked
       final imageUrl = await uploadImagetocloudinary();
       // Prepare the data for update
@@ -246,11 +274,17 @@ class ProductController extends GetxController {
         'pprice': price,
         'pquantity': quantity,
         'pdesc': pdesc,
+        'author': selectedAuthor.isNotEmpty
+            ? selectedAuthor
+            : existingAuthor, // Update author
+
         'imagename': imageUrl ?? existingImageUrl,
       };
 
       // Update the product details in Firebase
       await productDoc.update(updateData);
+
+      fetchData();
 
       SnackbarUtil.showSnackbar(
         "Success",

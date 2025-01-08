@@ -1,9 +1,9 @@
-// import 'package:adminpanel/views/displaycatscreen.dart';
 import 'package:adminpanel/views/mainscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'firebase_options.dart';
+// import 'views/loginscreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,9 +18,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MainScreen(),
+      initialRoute: '/admin',
+      getPages: [
+        // Define all the routes here
+        // GetPage(
+        //   name: '/login',
+        //   page: () => AdminLoginScreen(),
+        // ),
+        GetPage(
+          name: '/admin',
+          page: () => MainScreen(),
+        ),
+      ],
     );
   }
 }

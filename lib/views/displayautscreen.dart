@@ -33,7 +33,7 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
         elevation: 5,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(1.0),
         child: Obx(() {
           if (con.isloading.value) {
             return const Center(child: CircularProgressIndicator());
@@ -73,8 +73,8 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
                       child: author['imagename'] != null
                           ? Image.network(
                               author['imagename'],
-                              width: 80,
-                              height: 80,
+                              width: 60,
+                              height: 60,
                               fit: BoxFit.cover,
                             )
                           : Container(
@@ -100,18 +100,9 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
                           Text(
                             author['auname'] ?? "Unknown Author",
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          // Placeholder for additional author details (can be added in future)
-                          Text(
-                            "Author details here",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
                             ),
                           ),
                         ],
@@ -123,7 +114,8 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
                       children: [
                         // Edit Icon
                         IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.purple),
+                          icon: const Icon(Icons.edit,
+                              color: Color.fromARGB(255, 39, 126, 176)),
                           onPressed: () {
                             Get.to(
                                 () => EditAuthorPage(authorId: author['id']));
@@ -131,7 +123,8 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
                         ),
                         // Delete Icon
                         IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
+                          icon: const Icon(Icons.delete,
+                              color: Color.fromARGB(225, 255, 17, 0)),
                           onPressed: () async {
                             final confirmed = await showDialog(
                               context: context,

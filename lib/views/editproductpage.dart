@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:adminpanel/controller/productcontroller.dart';
+import 'package:adminpanel/utils/formsutils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24,13 +25,16 @@ class _EditProductPageState extends State<EditProductPage> {
   final TextEditingController pdescController = TextEditingController();
 
   // For image management
-  // File? selectedImage;
+  String? selectedAuthor; // To store selected author
+  List<String> authors = []; // List of authors (replace with your source)
   String imageUrl = "";
 
   @override
   void initState() {
     super.initState();
     _loadProductDetails();
+
+    _loadAuthors();
   }
 
   // // Load product details to pre-fill the form
@@ -47,7 +51,17 @@ class _EditProductPageState extends State<EditProductPage> {
     pquantityController.text = productDoc['pquantity'].toString();
     pdescController.text = productDoc['pdesc'];
     imageUrl = productDoc['imagename']; // Get the existing image URL
+    selectedAuthor = productDoc['author']; // Set existing author
     setState(() {}); // Refresh the UI
+  }
+
+  Future<void> _loadAuthors() async {
+    // Example: Fetch authors from Firebase
+    var authorsSnapshot =
+        await FirebaseFirestore.instance.collection('authors').get();
+    authors =
+        authorsSnapshot.docs.map((doc) => doc['auname'].toString()).toList();
+    setState(() {});
   }
 
   @override
@@ -63,47 +77,67 @@ class _EditProductPageState extends State<EditProductPage> {
         child: Column(
           children: [
             // Display the current product image or a placeholder
-            Container(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height *
-                    0.3, // Adjust height based on screen size
+            Center(
+              child: Container(
+                width: 100, // Full width of the screen
+                height: 100, // Adjust height based on screen size
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
-                  image: DecorationImage(image: NetworkImage(imageUrl)),
+                  image: DecorationImage(
+                    image: NetworkImage(imageUrl),
+                    fit: BoxFit
+                        .cover, // Ensures the image covers the area without stretching
+                  ),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: Image.network(
                     imageUrl,
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height *
-                        0.3, // Adjust height based on screen size
-                    fit: BoxFit.cover, // Maintain aspect ratio without overflow
+                    width: 100, // Full width of the screen
+                    height:
+                        100, // Adjust height based on screen size// Dynamic height based on screen size
+                    fit: BoxFit
+                        .cover, // Ensures the image maintains aspect ratio and fills the container
                   ),
-                )),
+                ),
+              ),
+            ),
 
             SizedBox(height: 10),
             ElevatedButton(
                 onPressed: () {
                   con.pickImage();
                 },
-                child: Text('Pick New Image')),
-            SizedBox(height: 20),
-            TextField(
-                controller: pnameController,
-                decoration: InputDecoration(labelText: 'Product Name')),
-            TextField(
-                controller: ppriceController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Price')),
-            TextField(
-                controller: pquantityController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Quantity')),
-            TextField(
-                controller: pdescController,
-                decoration: InputDecoration(labelText: 'Description')),
-            SizedBox(height: 20),
+                style: ElevatedButton.styleFrom(
+                  iconColor: Colors.deepOrange,
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                ),
+                child: Text('Pick New Image', style: TextStyle(fontSize: 16))),
+            SizedBox(height: 16.0),
+
+            // Product Name Field
+            _buildTextField(pnameController, 'Product Name'),
+            SizedBox(height: 16.0),
+
+            // Price Field
+            _buildTextField(ppriceController, 'Price', isNumber: true),
+            SizedBox(height: 16.0),
+
+            // Quantity Field
+            _buildTextField(pquantityController, 'Quantity', isNumber: true),
+            SizedBox(height: 16.0),
+
+            // Description Field
+            _buildTextField(pdescController, 'Description'),
+            SizedBox(height: 16.0),
+
+            // Author Dropdown
+            authors.isEmpty
+                ? CircularProgressIndicator()
+                : _buildAuthorDropdown(),
+            SizedBox(height: 16.0),
+
+            // Update Button
             ElevatedButton(
                 onPressed: () {
                   final price = double.tryParse(ppriceController.text.trim());
@@ -111,12 +145,50 @@ class _EditProductPageState extends State<EditProductPage> {
                   final desc = pdescController.text.trim();
                   final quan = double.tryParse(pquantityController.text.trim());
                   con.editProduct(widget.catname, widget.productId, name, price,
-                      quan, desc);
+                      quan, desc, selectedAuthor ?? '');
                 },
-                child: Text('Update Product')),
+                style: ElevatedButton.styleFrom(
+                  iconColor: Colors.deepOrange,
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 50),
+                ),
+                child: Text('Update Product', style: TextStyle(fontSize: 16))),
           ],
         ),
       ),
+    );
+  }
+
+  // Utility method for building TextFields
+  Widget _buildTextField(TextEditingController controller, String label,
+      {bool isNumber = false}) {
+    return TextField(
+      controller: controller,
+      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      ),
+    );
+  }
+
+  // Utility method for building Author Dropdown
+  Widget _buildAuthorDropdown() {
+    return DropdownButton<String>(
+      value: selectedAuthor,
+      hint: Text('Select Author'),
+      isExpanded: true,
+      items: authors.map((author) {
+        return DropdownMenuItem<String>(
+          value: author,
+          child: Text(author),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          selectedAuthor = value;
+        });
+      },
     );
   }
 }

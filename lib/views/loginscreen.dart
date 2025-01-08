@@ -1,110 +1,94 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
-import 'package:adminpanel/controller/logincontroller.dart';
-import 'package:adminpanel/views/customtextfield.dart';
+import 'package:adminpanel/utils/snackbarutils.dart';
+import 'package:adminpanel/views/mainscreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class AdminLoginScreen extends StatefulWidget {
+  const AdminLoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<AdminLoginScreen> createState() => _AdminLoginScreenState();
+}
+
+class _AdminLoginScreenState extends State<AdminLoginScreen> {
+  final TextEditingController passwordController = TextEditingController();
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  String hardcodedPassword = "admin123"; // Hardcoded password (if needed)
+
+  Future<void> verifyPassword() async {
+    try {
+      // OPTIONAL: Fetch password from Firestore
+      DocumentSnapshot snapshot =
+          await firestore.collection("adminpanel").doc("admin").get();
+
+      String storedPassword =
+          snapshot.exists ? snapshot["password"] : hardcodedPassword;
+
+      if (passwordController.text == storedPassword) {
+        // Password matches
+        SnackbarUtil.showSnackbar(
+          "Successfully Login",
+          "Welcome Admin",
+          type: 'success',
+        );
+        // Navigate to admin dashboard
+        Get.to(() => const MainScreen());
+      } else {
+        // Password doesn't match
+        SnackbarUtil.showSnackbar(
+          "Error",
+          "Password in Incorrect",
+          type: 'error',
+        );
+      }
+    } catch (e) {
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "An Error occurred",
+        type: 'error',
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final con = Get.put(LoginController());
-
-    return SafeArea(
-        child: Scaffold(
-      body: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Admin Login",
+          style: GoogleFonts.roboto(
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+              color: Color.fromARGB(227, 24, 24, 24)),
+        ),
+        centerTitle: true,
+      ),
+      body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Login",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              // TextField(
-
-              //   decoration: InputDecoration(
-              //     suffixIcon: Icon(Icons.email),
-              //     border: OutlineInputBorder(
-              //       borderSide: BorderSide(color: Colors.black),
-
-              //     ),
-              //     hintText: "Enter your email...",
-              //   ),
-              // ),
-
-              CustomTextField(
-                  controller: con.emailcontroller,
-                  sufIcon: Icon(Icons.email),
-                  Hint: "Enter your email..."),
-
-              SizedBox(
-                height: 15,
-              ),
-
-              CustomTextField(
-                  controller: con.usercontroller,
-                  sufIcon: Icon(Icons.person),
-                  Hint: "Enter your username..."),
-
-              SizedBox(
-                height: 15,
-              ),
-
-              Obx(() {
-                return TextField(
-                  decoration: InputDecoration(
-                    // suffixIcon: Icon(Icons.visibility),
-                    suffixIcon: IconButton(
-                        onPressed: () {
-                          con.isToggle();
-                        },
-                        icon: Icon(con.isObscure.value
-                            ? Icons.visibility
-                            : Icons.visibility_off)),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    hintText: "Enter your password...",
-                  ),
-                  obscureText: con.isObscure.value,
-                  controller: con.passcontroller,
-                );
-              }),
-              SizedBox(
-                height: 15,
-              ),
-
-              InkWell(
-                onTap: () {
-                  // print(con.emailcontroller.text.trim());
-                  // print(con.usercontroller.text.trim());
-                  // print(con.passcontroller.text.trim());
-
-                  con.mylogin();
-                },
-                child: Container(
-                  width: Get.width * 0.5,
-                  height: Get.height * 0.05,
-                  decoration: BoxDecoration(color: Colors.blue),
-                  child: Center(
-                    child: Text("Login"),
-                  ),
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: "Enter Password",
+                  border: OutlineInputBorder(),
                 ),
               ),
-
-              SizedBox(
-                height: 15,
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: verifyPassword,
+                child: const Text("Login"),
               ),
             ],
           ),
         ),
       ),
-    ));
+    );
   }
 }

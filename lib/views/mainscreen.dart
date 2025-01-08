@@ -1,3 +1,4 @@
+import 'package:adminpanel/views/adminprofile.dart';
 import 'package:adminpanel/views/displayautscreen.dart';
 import 'package:adminpanel/views/displaycatscreen.dart';
 import 'package:adminpanel/views/homepage.dart';
@@ -19,6 +20,7 @@ class _MainScreenState extends State<MainScreen> {
     AdminHomePage(),
     const DisplayCatScreen(),
     const AuthorListScreen(),
+    const AdminProfile(),
     // const (),
   ];
 
@@ -55,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
         height: 55, // Navigation bar height
         backgroundColor: Colors.transparent, // Transparent to avoid overlap
         color: const Color.fromARGB(255, 32, 96, 214), // Bar color
-        buttonBackgroundColor: const Color.fromARGB(255, 32, 96, 214),
+        buttonBackgroundColor: const Color(0xFF2060D6),
         // Active icon background
         animationDuration:
             const Duration(milliseconds: 700), // Smooth animation
@@ -67,9 +69,9 @@ class _MainScreenState extends State<MainScreen> {
         },
         items: const [
           Icon(Icons.home, size: 23, color: Colors.white),
-          Icon(Icons.menu_book, size: 23, color: Colors.white),
-          Icon(Icons.shopping_cart, size: 23, color: Colors.white),
-          // Icon(Icons.person, size: 23, color: Colors.white),
+          Icon(Icons.category, size: 23, color: Colors.white),
+          Icon(Icons.groups_2, size: 23, color: Colors.white),
+          Icon(Icons.person, size: 23, color: Colors.white),
         ],
       ),
     );
