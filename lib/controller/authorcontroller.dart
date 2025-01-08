@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print, invalid_use_of_protected_member, prefer_const_constructors
 
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
+import 'package:adminpanel/utils/snackbarutils.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -36,12 +36,18 @@ class AuthorController extends GetxController {
         } else {
           selectedFile.value = File(result.files.single.path!);
         }
-        Get.snackbar("Success", "Image Selected!");
-      } else {
-        Get.snackbar("Error", "No image selected.");
+        SnackbarUtil.showSnackbar(
+          "Success",
+          "Image Selected!",
+          type: 'success',
+        );
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to pick image: $e");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Failed to Pick Image....",
+        type: 'error',
+      );
     }
   }
 
@@ -52,7 +58,7 @@ class AuthorController extends GetxController {
     const String uploadPreset = "images"; // Replace with your upload preset
 
     if (selectedFile.value == null && selectedFilesByte.value == null) {
-      Get.snackbar("Error", "Please select an image");
+      // Get.snackbar("Error", "Please selectafadf an image");
       return null;
     }
 
@@ -81,14 +87,21 @@ class AuthorController extends GetxController {
 
       if (response.statusCode == 200) {
         final imageUrl = jsonResponse['secure_url'];
-        Get.snackbar("Success", "Image Uploaded: $imageUrl");
+        // Get.snackbar("Success", "Image Uploaded Successfully");
         return imageUrl;
       } else {
-        Get.snackbar("Error", "Upload failed: ${response.statusCode}");
+        SnackbarUtil.showSnackbar(
+          "Error",
+          "Upload Files....",
+          type: 'error',
+        );
       }
     } catch (e) {
-      print("Error uploading image: $e");
-      Get.snackbar("Error", "Failed to upload image: $e");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Failed to Upload Image....",
+        type: 'error',
+      );
     }
     return null;
   }
@@ -102,25 +115,72 @@ class AuthorController extends GetxController {
 // Observable list of authors
   // var authorsList = <Map<String, String>>[].obs;
 
+  // Future<void> fetchAuthors() async {
+  //   try {
+  //     isloading.value = true;
+  //     final QuerySnapshot data = await firebase.collection("authors").get();
+
+  //     authorsList.clear();
+  //     if (data.docs.isNotEmpty) {
+  //       List<Map<String, dynamic>> datalist = [];
+  //       for (var doc in data.docs) {
+  //         datalist.add(doc.data() as Map<String, dynamic>);
+  //       }
+  //       authorsdata.value = datalist;
+  //       authors.value = data.docs;
+  //       isloading.value = false;
+
+  //       print(authorsdata.value.toString());
+  //     }
+  //   } catch (e) {
+  //     print(e.toString());
+  //   }
+  // }
+
+  // Future<void> fetchAuthors() async {
+  //   try {
+  //     isloading.value = true;
+  //     final QuerySnapshot data = await firebase.collection("authors").get();
+
+  //     authorsList.clear();
+  //     if (data.docs.isNotEmpty) {
+  //       List<Map<String, dynamic>> datalist = [];
+  //       for (var doc in data.docs) {
+  //         datalist.add(doc.data() as Map<String, dynamic>);
+  //       }
+  //       authorsList
+  //           .assignAll(datalist); // Use this to update the list in the UI
+  //       isloading.value = false;
+
+  //       print("Authors List: ${authorsList.length}"); // Debug log
+  //     } else {
+  //       print("No authors found");
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching authors: $e");
+  //   }
+  // }
+
   Future<void> fetchAuthors() async {
     try {
-      isloading.value = true;
+      isloading.value = true; // Start loading
       final QuerySnapshot data = await firebase.collection("authors").get();
-      // Har author ka data loop mein fetch kar rahe hain
-      authorsList.clear();
+
+      authorsList.clear(); // Clear the previous data
       if (data.docs.isNotEmpty) {
         List<Map<String, dynamic>> datalist = [];
         for (var doc in data.docs) {
-          datalist.add(doc.data() as Map<String, dynamic>);
+          // Add 'id' explicitly to the data
+          var authorData = doc.data() as Map<String, dynamic>;
+          authorData['id'] = doc.id; // Assign Firestore document ID
+          datalist.add(authorData);
         }
-        authorsdata.value = datalist;
-        authors.value = data.docs;
-        isloading.value = false;
-
-        print(authorsdata.value.toString());
+        authorsList.assignAll(datalist); // Assign fetched data to authorsList
       }
+      isloading.value = false; // Stop loading
     } catch (e) {
-      print(e.toString());
+      isloading.value = false; // Stop loading even if there's an error
+      print("Error fetching authors: $e");
     }
   }
 
@@ -149,7 +209,11 @@ class AuthorController extends GetxController {
 
     // Validate inputs
     if (authorName.isEmpty) {
-      Get.snackbar("Error", "Please provide valid details");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Please Provide Valid Details....",
+        type: 'error',
+      );
       return;
     }
 
@@ -165,87 +229,143 @@ class AuthorController extends GetxController {
             finalImagePath, // Use either uploaded image URL or default path
       });
 
+      fetchAuthors();
+
       // Show success message and navigate back
-      Get.snackbar("Success", "Author Added!!");
+      SnackbarUtil.showSnackbar(
+        "Success",
+        "Author Added Successfully!....",
+        type: 'success',
+      );
+
+      // Wait for the Snackbar to display before navigating
+      await Future.delayed(
+          Duration(seconds: 2)); // Snackbar will display for 2 seconds
+
       Get.back(closeOverlays: true);
     } catch (e) {
-      log(e.toString());
-      Get.snackbar("Error", "Failed to add Author!");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Failed to Add Author!....",
+        type: 'error',
+      );
     }
   }
 
-  Future<void> editAuthor(
-      String autname, String authorId, String currentImageUrl) async {
-    String? imageUrl;
+  // Future<void> editAuthor(
+  //     String autname, String authorId, String existingImageUrl) async {
+  //   // If a new image is selected, upload it
 
-    // If a new image is selected, upload it
-    if (selectedFile.value != null) {
-      imageUrl = await uploadImagetocloudinary();
-      if (imageUrl == null) {
-        Get.snackbar("Error", "Failed to upload image");
-        return;
-      }
-    } else {
-      // If no new image selected, use the current image URL
-      imageUrl =
-          currentImageUrl; // Keep the old image if no new one is selected
-    }
+  //   String? auname = autname;
+  //   final imageUrl = await uploadImagetocloudinary();
 
-    // Collect form data
+  //   // Use existing image if no new image is uploaded
+  //   final String finalImagePath = imageUrl ?? existingImageUrl;
 
-    String? authname = authnameController.text.trim();
+  //   // Validation
+  //   if (auname.isEmpty) {
+  //     Get.snackbar("Error", "Please provide valid details");
+  //     return;
+  //   }
 
-    // Validation
-    if (authname.isEmpty) {
-      Get.snackbar("Error", "Please provide valid details");
+  //   try {
+  //     // Reference to the specific product document
+  //     DocumentReference authorDoc = firebase.collection('authors').doc(autname);
+  //     // Prepare the data for update
+  //     Map<String, dynamic> updateData = {
+  //       'auname': autname,
+  //       'imagename': finalImagePath,
+  //     };
+
+  //     // Update the product details in Firebase
+  //     await authorDoc.update(updateData);
+
+  //     Get.snackbar("Success", "Author Updated!");
+  //     Get.back(closeOverlays: true); // Close the edit page
+  //   } catch (e) {
+  //     log(e.toString());
+  //     Get.snackbar("Error", "Failed to update author!");
+  //   }
+  // }
+
+  Future<void> editAuthor(String authorId, String autname) async {
+    if (autname.isEmpty) {
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Author name cannot be empty!",
+        type: 'error', // Snackbar disappears quickly
+      );
       return;
     }
 
     try {
-      // Reference to the specific product document
-      DocumentReference authorDoc = firebase
-          .collection('authors')
-          .doc(autname)
-          .collection('author')
-          .doc(authorId);
+      // Reference to the specific author document in Firestore
+      DocumentReference authorDoc =
+          firebase.collection('authors').doc(authorId);
 
-      // Prepare the data for update
-      Map<String, dynamic> updateData = {
-        'auname': authname,
-      };
-
-      // If a new image was uploaded, include the new image URL
-      if (imageUrl.isEmpty) {
-        updateData['imagename'] = imageUrl;
+      // Fetch existing author details
+      final authorSnapshot = await authorDoc.get();
+      if (!authorSnapshot.exists) {
+        SnackbarUtil.showSnackbar(
+          "Error",
+          "Author Not Found....",
+          type: 'error',
+        );
+        return;
       }
 
-      // Update the product details in Firebase
-      await authorDoc.update(updateData);
+      final existingData = authorSnapshot.data() as Map<String, dynamic>;
+      final existingImageUrl = existingData['imagename'] ?? "";
 
-      Get.snackbar("Success", "Author Updated!");
+      // Upload the image if a new one is picked
+      final imageUrl = await uploadImagetocloudinary();
+
+      // Prepare update data
+      Map<String, dynamic> updateData = {
+        'auname': autname, // Update the author name
+        'imagename':
+            imageUrl ?? existingImageUrl, // Use new image or existing image
+      };
+      fetchAuthors();
+
+      // Update the document in Firestore
+      await authorDoc.update(updateData);
+      // Only show a single success snackbar
+      SnackbarUtil.showSnackbar(
+        'Success',
+        'Author Details Updated Successfully',
+        type: 'success',
+      );
+
+      await Future.delayed(
+          Duration(seconds: 2)); // Snackbar will display for 2 seconds
+
       Get.back(closeOverlays: true); // Close the edit page
     } catch (e) {
-      log(e.toString());
-      Get.snackbar("Error", "Failed to update Author!");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Failed to Update Author Details....",
+        type: 'error',
+      );
     }
   }
 
-  Future<void> deleteAuthor(String autname, String authorId) async {
+  Future<void> deleteAuthor(String authorId) async {
     try {
-      // Reference to the specific product document
-      DocumentReference authorDoc = firebase
-          .collection('authors')
-          .doc(autname)
-          .collection('author')
-          .doc(authorId);
+      await firebase.collection('authors').doc(authorId).delete();
+      fetchAuthors();
 
-      // Delete the product
-      await authorDoc.delete();
-      Get.snackbar("Success", "Author Deleted!");
-      Get.back(closeOverlays: true);
+      SnackbarUtil.showSnackbar(
+        "Success",
+        "Author Deleted successfully....",
+        type: 'success',
+      );
     } catch (e) {
-      log(e.toString());
-      Get.snackbar("Error", "Failed to delete author!");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Error in Deletion....",
+        type: 'error',
+      );
     }
   }
 }

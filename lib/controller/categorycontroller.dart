@@ -2,7 +2,9 @@
 
 // import 'dart:io';
 
-import 'package:adminpanel/views/displaycatscreen.dart';
+import 'package:adminpanel/utils/snackbarutils.dart';
+// import 'package:adminpanel/views/displaycatscreen.dart';
+import 'package:adminpanel/views/mainscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -51,29 +53,44 @@ class CategoryController extends GetxController {
       if (!categoryDoc.exists) {
         // If category doesn't exist, create it
         await categoryRef.set({'name': categorycontroller.text.trim()});
-        Get.snackbar("Success", "Category Added!!");
+        SnackbarUtil.showSnackbar(
+          "Success",
+          "Category Created Successfully!!!",
+          type: 'success',
+        );
 
         categorycontroller.clear(); // Clear the text field
 
         // Navigate to the display categories page
-        Get.off(() => const DisplayCatScreen());
+        Get.off(() => const MainScreen());
       } else {
         // If category already exists
-        Get.snackbar("Error", "Category already exists");
+        SnackbarUtil.showSnackbar(
+          "Error",
+          "This Category Already Exists",
+          type: 'error',
+        );
       }
 
       fetchdata(); // Fetch the updated categories
     } catch (e) {
-      print(e.toString());
-      Get.snackbar("Error", "Something went wrong");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Something Went Wrong",
+        type: 'error',
+      );
     }
   }
 
   // Update category name
-  Future<void> updatecategory(String catId, String newCatName ) async {
+  Future<void> updatecategory(String catId, String newCatName) async {
     try {
       if (newCatName.isEmpty) {
-        Get.snackbar("Error", "New category name cannot be empty.");
+        SnackbarUtil.showSnackbar(
+          "Error",
+          "New Category name con not be empty!",
+          type: 'error',
+        );
       } else {
         await FirebaseFirestore.instance
             .collection('categories')
@@ -82,12 +99,18 @@ class CategoryController extends GetxController {
 
         fetchdata();
 
-        print("Category updated successfully.");
-        Get.snackbar("Success", "Category updated successfully.");
+        SnackbarUtil.showSnackbar(
+          "Success",
+          "Category Updated Successfully!",
+          type: 'success',
+        );
       }
     } catch (e) {
-      print("Error updating category: ${e.toString()}");
-      Get.snackbar("Error", "Error in category update.");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Error in Category Update!....",
+        type: 'error',
+      );
     }
   }
 
@@ -96,11 +119,17 @@ class CategoryController extends GetxController {
       await firebase.collection('categories').doc(catId).delete();
       fetchdata();
 
-      print("category Deleted successfully.....");
-      Get.snackbar("Success", "category Deleted successfully....");
+      SnackbarUtil.showSnackbar(
+        "Success",
+        "Category Deleted Successfully!",
+        type: 'success',
+      );
     } catch (e) {
-      print(e.toString());
-      Get.snackbar("Error", "error in Deletion......");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Error in Deletion....",
+        type: 'error',
+      );
     }
   }
 }

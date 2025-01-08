@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:adminpanel/utils/snackbarutils.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -24,6 +25,8 @@ class ProductController extends GetxController {
   var selectedFilesByte = Rxn<List<int>>();
   var selectedFileName = ''.obs;
 
+  var selectedAuthor = ''.obs; // Store selected author
+
   // Pick Image from gallery
   Future<void> pickImage() async {
     try {
@@ -38,12 +41,18 @@ class ProductController extends GetxController {
         } else {
           selectedFile.value = File(result.files.single.path!);
         }
-        Get.snackbar("Success", "Image Selected!");
-      } else {
-        Get.snackbar("Error", "No image selected.");
+        SnackbarUtil.showSnackbar(
+          "Success",
+          "Image Selected!",
+          type: 'success',
+        );
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to pick image: $e");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Failed to Pick Image....",
+        type: 'error',
+      );
     }
   }
 
@@ -54,7 +63,7 @@ class ProductController extends GetxController {
     const String uploadPreset = "images"; // Replace with your upload preset
 
     if (selectedFile.value == null && selectedFilesByte.value == null) {
-      Get.snackbar("Error", "Please select an image");
+      // Get.snackbar("Error", "Please selectafadf an image");
       return null;
     }
 
@@ -83,14 +92,21 @@ class ProductController extends GetxController {
 
       if (response.statusCode == 200) {
         final imageUrl = jsonResponse['secure_url'];
-        Get.snackbar("Success", "Image Uploaded: $imageUrl");
+        // Get.snackbar("Success", "Image Uploaded Successfully");
         return imageUrl;
       } else {
-        Get.snackbar("Error", "Upload failed: ${response.statusCode}");
+        SnackbarUtil.showSnackbar(
+          "Error",
+          "Upload Files....",
+          type: 'error',
+        );
       }
     } catch (e) {
-      print("Error uploading image: $e");
-      Get.snackbar("Error", "Failed to upload image: $e");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Failed to Upload Image....",
+        type: 'error',
+      );
     }
     return null;
   }
@@ -133,6 +149,10 @@ class ProductController extends GetxController {
   }
 
   Future<void> addProduct(String catname) async {
+    if (selectedAuthor.value.isEmpty) {
+      Get.snackbar('Error', 'Please select an author');
+      return;
+    }
     // Upload image to Cloudinary
     final imageUrl = await uploadImagetocloudinary();
 
@@ -171,6 +191,7 @@ class ProductController extends GetxController {
         'pprice': price,
         'pquantity': quantity,
         'pdesc': pdesc,
+        'author': selectedAuthor.value, // Add selected author
         'imagename':
             finalImagePath, // Use either uploaded image URL or default path
       });
@@ -186,34 +207,19 @@ class ProductController extends GetxController {
 
   Future<void> editProduct(String cattname, String producttId, String proName,
       double? pprice, double? pquantity, String pdescc) async {
-    // String? imageUrl;
-
-    // // If a new image is selected, upload it
-    // if (selectedFile.value != null) {
-    //   imageUrl = await uploadImagetocloudinary();
-    //   if (imageUrl == null) {
-    //     Get.snackbar("Error", "Failed to upload image");
-    //     return;
-    //   }
-    // } else {
-    //   // If no new image selected, use the current image URL
-    //   imageUrl =
-    //       currentImageUrl; // Keep the old image if no new one is selected
-    // }
-
     // Collect form data
     double? price = pprice;
     double? quantity = pquantity;
     String? pname = proName;
     String? pdesc = pdescc;
-    final imageUrl = await uploadImagetocloudinary();
+    // final imageUrl = await uploadImagetocloudinary();
 
-    // Default image URL (if no image is uploaded)
-    const String defaultImagePath =
-        'assets/images/logo.png'; // Path to your logo
+    // // Default image URL (if no image is uploaded)
+    // const String defaultImagePath =
+    //     'assets/images/logo.png'; // Path to your logo
 
-    // Use the default image if no image is uploaded
-    final String finalImagePath = imageUrl ?? defaultImagePath;
+    // // Use the default image if no image is uploaded
+    // final String finalImagePath = imageUrl ?? defaultImagePath;
 
     // Validation
     if (pname.isEmpty || pdesc.isEmpty || price == null || quantity == null) {
@@ -228,28 +234,40 @@ class ProductController extends GetxController {
           .doc(cattname)
           .collection('products')
           .doc(producttId);
+      final authorSnapshot = await productDoc.get();
+      final existingData = authorSnapshot.data() as Map<String, dynamic>;
+      final existingImageUrl = existingData['imagename'] ?? "";
+
+      // Upload the image if a new one is picked
+      final imageUrl = await uploadImagetocloudinary();
       // Prepare the data for update
       Map<String, dynamic> updateData = {
         'pname': pname,
         'pprice': price,
         'pquantity': quantity,
         'pdesc': pdesc,
-        'imagename': finalImagePath,
+        'imagename': imageUrl ?? existingImageUrl,
       };
-
-      // If a new image was uploaded, include the new image URL
-      // if (imageUrl.isEmpty) {
-      //   updateData['imagename'] = imageUrl;
-      // }
 
       // Update the product details in Firebase
       await productDoc.update(updateData);
 
-      Get.snackbar("Success", "Product Updated!");
+      SnackbarUtil.showSnackbar(
+        "Success",
+        "Product Details Updated!",
+        type: 'success',
+      );
+      // Wait for the Snackbar to display before navigating
+      await Future.delayed(
+          Duration(seconds: 2)); // Snackbar will display for 2 seconds
+
       Get.back(closeOverlays: true); // Close the edit page
     } catch (e) {
-      log(e.toString());
-      Get.snackbar("Error", "Failed to update product!");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Failed to Update Product!",
+        type: 'error',
+      );
     }
   }
 
@@ -264,11 +282,19 @@ class ProductController extends GetxController {
 
       // Delete the product
       await productDoc.delete();
-      Get.snackbar("Success", "Product Deleted!");
+      SnackbarUtil.showSnackbar(
+        "Success",
+        "Product Deleted Successfully!",
+        type: 'success',
+      );
+      await Future.delayed(Duration(seconds: 2));
       Get.back(closeOverlays: true);
     } catch (e) {
-      log(e.toString());
-      Get.snackbar("Error", "Failed to delete product!");
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Failed to Delete Product!",
+        type: 'error',
+      );
     }
   }
 }

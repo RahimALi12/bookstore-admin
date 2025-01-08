@@ -21,6 +21,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
       authcontroller.fetchAuthors();
     }
   }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   final authcontroller = Get.put(AuthorController());
+  //   authcontroller.authorsList.assignAll([
+  //     {'auname': 'Author 1', 'imagename': 'assets/images/logo.png'},
+  //     {'auname': 'Author 2', 'imagename': 'assets/images/logo.png'},
+  //   ]);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -56,41 +65,78 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 controller: con.pquantityController,
                 hintText: "Enter product quantity..."),
             const SizedBox(height: 10),
+            // Obx(() {
+            //   // Check if the authors list is still empty or loading
+            //   // if (authcontroller.authorsList.isEmpty) {
+            //   //   authcontroller.fetchAuthors(); // Fetch authors when empty
+            //   //   return const Center(
+            //   //       child:
+            //   //           CircularProgressIndicator()); // Show loading indicator while fetching
+            //   // }
+
+            //   // Return the Dropdown only when authors list is populated
+            //   return DropdownButton<String>(
+            //     hint: const Text('Select Author'),
+            //     value: con.selectedAuthor.value.isNotEmpty
+            //         ? con.selectedAuthor.value
+            //         : null,
+            //     onChanged: (selectedAuthor) {
+            //       con.selectedAuthor.value =
+            //           selectedAuthor ?? ''; // Save selected author
+            //     },
+            //     items: authcontroller.authorsList.map((author) {
+            //       return DropdownMenuItem<String>(
+            //         value: author['auname'],
+            //         child: Row(
+            //           children: [
+            //             Image.asset(
+            //               author['imagename'] ??
+            //                   'assets/images/logo.png', // Default image
+            //               width: 30,
+            //               height: 30,
+            //             ),
+            //             const SizedBox(width: 10),
+            //             Text(author['auname'] ?? "Default Author Name"),
+            //           ],
+            //         ),
+            //       );
+            //     }).toList(),
+            //   );
+            // }),
             Obx(() {
-              // Check if the authors list is still empty or loading
-              if (authcontroller.authorsList.isEmpty) {
-                authcontroller.fetchAuthors(); // Fetch authors when empty
-                return const Center(
-                    child:
-                        CircularProgressIndicator()); // Show loading indicator while fetching
+              if (authcontroller.isloading.value) {
+                return const Center(child: CircularProgressIndicator());
               }
 
-              // Return the Dropdown only when authors list is populated
+              if (authcontroller.authorsList.isEmpty) {
+                return const Text("No authors available");
+              }
+
               return DropdownButton<String>(
                 hint: const Text('Select Author'),
+                value: con.selectedAuthor.value.isNotEmpty
+                    ? con.selectedAuthor.value
+                    : null,
                 onChanged: (selectedAuthor) {
-                  print("Selected author: $selectedAuthor");
+                  con.selectedAuthor.value = selectedAuthor ?? '';
                 },
                 items: authcontroller.authorsList.map((author) {
                   return DropdownMenuItem<String>(
                     value: author['auname'],
                     child: Row(
                       children: [
-                        Image.asset(
-                          author['imagename'] ??
-                              'assets/images/logo.png', // Default image if imagename is null
-                          width: 30,
-                          height: 30,
-                        ),
                         const SizedBox(width: 10),
-                        Text(author['auname'] ??
-                            "Default Author Name"), // To avoid null, add a default value
+                        Text(author['auname'] ?? "Default Author Name"),
                       ],
                     ),
                   );
                 }).toList(),
               );
             }),
+
+            SizedBox(
+              height: 50,
+            ),
             Obx(() {
               return Column(
                 children: [
