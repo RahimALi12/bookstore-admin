@@ -29,7 +29,7 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
         ),
         centerTitle: true,
         backgroundColor:
-            const Color.fromARGB(255, 132, 76, 211), // Matches bottom nav theme
+            const Color.fromARGB(255, 32, 96, 214), // Matches bottom nav theme
         elevation: 5,
       ),
       body: Padding(
@@ -171,7 +171,7 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
         onPressed: () {
           Get.to(const AddAuthorScreen());
         },
-        backgroundColor: const Color.fromARGB(255, 132, 76, 211),
+        backgroundColor: const Color.fromARGB(255, 32, 96, 214),
         child: const Icon(Icons.add, color: Colors.white),
         tooltip: "Create Author",
       ),

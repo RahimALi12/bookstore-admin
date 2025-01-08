@@ -23,7 +23,7 @@ class DisplayCatScreen extends StatelessWidget {
         ),
         centerTitle: true,
         backgroundColor:
-            const Color.fromARGB(255, 132, 76, 211), // Matches bottom nav theme
+            const Color.fromARGB(255, 32, 96, 214), // Matches bottom nav theme
         elevation: 5,
       ),
       body: SingleChildScrollView(
@@ -71,16 +71,17 @@ class DisplayCatScreen extends StatelessWidget {
                         title: Text(
                           category['name'],
                           style: const TextStyle(
-                            fontSize: 20,
+                            fontSize: 15,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         leading: CircleAvatar(
-                          backgroundColor: Theme.of(context).primaryColor,
+                          backgroundColor:
+                              const Color.fromARGB(255, 18, 55, 124),
                           child: Text(
                             category['name'][0].toUpperCase(),
                             style: const TextStyle(
-                                fontSize: 18,
+                                fontSize: 13,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white),
                           ),
@@ -190,7 +191,7 @@ class DisplayCatScreen extends StatelessWidget {
         onPressed: () {
           Get.to(const AddCategoryScreen());
         },
-        backgroundColor: const Color.fromARGB(255, 132, 76, 211),
+        backgroundColor: const Color.fromARGB(255, 32, 96, 214),
         child: const Icon(Icons.add, color: Colors.white),
         tooltip: "Create Category",
       ),

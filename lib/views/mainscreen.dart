@@ -54,8 +54,8 @@ class _MainScreenState extends State<MainScreen> {
         index: _currentIndex, // Active index
         height: 55, // Navigation bar height
         backgroundColor: Colors.transparent, // Transparent to avoid overlap
-        color: const Color.fromARGB(255, 132, 76, 211), // Bar color
-        buttonBackgroundColor: const Color.fromARGB(255, 132, 76, 211),
+        color: const Color.fromARGB(255, 32, 96, 214), // Bar color
+        buttonBackgroundColor: const Color.fromARGB(255, 32, 96, 214),
         // Active icon background
         animationDuration:
             const Duration(milliseconds: 700), // Smooth animation

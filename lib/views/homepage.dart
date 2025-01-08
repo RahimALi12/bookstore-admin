@@ -29,7 +29,7 @@ class AdminHomePage extends StatelessWidget {
         ),
         centerTitle: true,
         elevation: 4,
-        backgroundColor: const Color.fromARGB(255, 132, 76, 211),
+        backgroundColor: const Color.fromARGB(255, 32, 96, 214),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -108,7 +108,7 @@ class AdminHomePage extends StatelessWidget {
         children: [
           FloatingActionButton(
             heroTag: "addCategory",
-            backgroundColor: const Color.fromARGB(255, 132, 76, 211),
+            backgroundColor: const Color.fromARGB(255, 32, 96, 214),
             onPressed: () {
               Get.to(const AddCategoryScreen());
             },
@@ -121,7 +121,7 @@ class AdminHomePage extends StatelessWidget {
           const SizedBox(height: 10),
           FloatingActionButton(
             heroTag: "addAuthor",
-            backgroundColor: const Color.fromARGB(255, 132, 76, 211),
+            backgroundColor: const Color.fromARGB(255, 32, 96, 214),
             onPressed: () {
               Get.to(const AddAuthorScreen());
             },
