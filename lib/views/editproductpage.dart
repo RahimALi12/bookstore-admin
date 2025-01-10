@@ -5,6 +5,7 @@ import 'package:adminpanel/controller/productcontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class EditProductPage extends StatefulWidget {
   // final String catname;
@@ -87,7 +88,12 @@ class _EditProductPageState extends State<EditProductPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Product'),
+        title: Text(
+          'Edit Product',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 19,
+          ),
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

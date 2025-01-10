@@ -36,12 +36,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
       appBar: AppBar(
         title: Text(
           "Add Product",
-          style: GoogleFonts.roboto(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-              color: Color.fromARGB(228, 255, 255, 255)),
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 19,
+          ),
         ),
-        backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),

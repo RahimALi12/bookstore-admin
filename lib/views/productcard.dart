@@ -2,12 +2,13 @@
 
 import 'dart:developer';
 
+import 'package:adminpanel/utils/snackbarutils.dart';
 import 'package:adminpanel/views/editproductpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   const ProductCard({
     super.key,
     required this.productId,
@@ -25,8 +26,13 @@ class ProductCard extends StatelessWidget {
   final double pquantity;
   // final String catname;
   final String pdesc;
-  final String imagename; // Image URL
+  final String imagename;
+  @override
+  State<ProductCard> createState() => _ProductCardState();
+}
 
+class _ProductCardState extends State<ProductCard> {
+  // Image URL
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -38,9 +44,9 @@ class ProductCard extends StatelessWidget {
       child: ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: (imagename.isNotEmpty)
+          child: (widget.imagename.isNotEmpty)
               ? Image.network(
-                  imagename,
+                  widget.imagename,
                   width: 60,
                   height: 60,
                   fit: BoxFit.cover,
@@ -61,14 +67,14 @@ class ProductCard extends StatelessWidget {
                 ),
         ),
         title: Text(
-          pname,
+          widget.pname,
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         subtitle: Text(
-          'Price: \$${pprice.toString()} | Quantity: $pquantity',
+          'Price: \$${widget.pprice.toString()} | Quantity: ${widget.pquantity}',
           style: const TextStyle(fontSize: 14, color: Colors.grey),
         ),
         isThreeLine: true,
@@ -81,13 +87,13 @@ class ProductCard extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => EditProductPage(
                     // catname: catname,
-                    productId: productId,
+                    productId: widget.productId,
                   ),
                 ),
               );
             } else if (value == 'delete') {
               // Show confirmation dialog for deleting the product
-              _showDeleteConfirmation(context, productId);
+              _showDeleteConfirmation(context, widget.productId);
             }
           },
           itemBuilder: (context) => [
@@ -119,28 +125,30 @@ class ProductCard extends StatelessWidget {
               },
               child: Text('Cancel'),
             ),
-            // TextButton(
-            //   onPressed: () async {
-            //     await deleteProduct(productId);
-            //     Navigator.pop(context);
-            //   },
-            //   child: Text('Delete'),
-            // ),
+            TextButton(
+              onPressed: () async {
+                await deleteProduct(productId);
+                Navigator.pop(context);
+              },
+              child: Text('Delete'),
+            ),
           ],
         );
       },
     );
   }
 
-  Future<void> deleteProduct(String catname, String productId) async {
+  Future<void> deleteProduct(String productId) async {
     try {
       await FirebaseFirestore.instance
-          .collection('categories')
-          .doc(catname)
           .collection('products')
           .doc(productId)
           .delete();
-      Get.snackbar("Success", "Product Deleted!");
+      SnackbarUtil.showSnackbar(
+        "Success",
+        "Product Deleted Successfully!",
+        type: 'error',
+      );
     } catch (e) {
       log(e.toString());
       Get.snackbar("Error", "Failed to delete product!");

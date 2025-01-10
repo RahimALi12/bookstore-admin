@@ -1,6 +1,7 @@
 import 'package:adminpanel/controller/logoutcontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AdminProfile extends StatelessWidget {
   const AdminProfile({Key? key}) : super(key: key);
@@ -14,11 +15,12 @@ class AdminProfile extends StatelessWidget {
       // backgroundColor: Color.fromARGB(255, 171, 226, 255),
       appBar: AppBar(
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Admin Profile",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 19,
+          ),
         ),
-        centerTitle: true,
       ),
       body: Center(
         child: Padding(
@@ -48,7 +50,7 @@ class AdminProfile extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                   backgroundColor: const Color.fromARGB(
-                      227, 255, 0, 0), // Red background for the button
+                      255, 32, 96, 214), // Red background for the button
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

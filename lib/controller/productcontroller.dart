@@ -44,7 +44,7 @@ class ProductController extends GetxController {
         SnackbarUtil.showSnackbar(
           "Success",
           "Image Selected!",
-          type: 'success',
+          type: 'info',
         );
       }
     } catch (e) {
@@ -213,7 +213,7 @@ class ProductController extends GetxController {
       SnackbarUtil.showSnackbar(
         "Congratulations!",
         "Product Added Successfully",
-        type: 'success',
+        type: 'info',
       );
 
       await Future.delayed(
@@ -297,7 +297,7 @@ class ProductController extends GetxController {
       SnackbarUtil.showSnackbar(
         "Success",
         "Product Details Updated!",
-        type: 'success',
+        type: 'info',
       );
       // Wait for the Snackbar to display before navigating
       await Future.delayed(

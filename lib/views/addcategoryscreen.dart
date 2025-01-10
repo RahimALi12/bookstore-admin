@@ -1,6 +1,7 @@
 import 'package:adminpanel/controller/categorycontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AddCategoryScreen extends StatefulWidget {
   const AddCategoryScreen({super.key});
@@ -15,7 +16,12 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
     final con = Get.put(CategoryController());
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Create Category"),
+        title: Text(
+          "Create Category",
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 19,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),

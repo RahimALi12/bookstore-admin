@@ -4,6 +4,7 @@ import 'package:adminpanel/controller/authorcontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class EditAuthorPage extends StatefulWidget {
   final String authorId;
@@ -48,7 +49,12 @@ class _EditAuthorPageState extends State<EditAuthorPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Author'),
+        title: Text(
+          'Edit Author',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 19,
+          ),
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

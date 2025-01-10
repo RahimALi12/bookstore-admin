@@ -5,6 +5,7 @@ import 'package:adminpanel/views/productcard.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ProductListPage extends StatelessWidget {
   const ProductListPage({super.key});
@@ -14,12 +15,21 @@ class ProductListPage extends StatelessWidget {
     // final con = Get.put(CategoryController());
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
+          backgroundColor: const Color.fromARGB(255, 32, 96, 214),
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
           onPressed: () {
-            Get.to(AddProductScreen());
+            Get.to(const AddProductScreen());
           }),
       appBar: AppBar(
-        title: Text('Products'),
+        title: Text(
+          'Products',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 19,
+          ),
+        ),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('products').snapshots(),

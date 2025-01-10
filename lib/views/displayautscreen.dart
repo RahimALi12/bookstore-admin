@@ -22,15 +22,10 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
       appBar: AppBar(
         title: Text(
           "Authors",
-          style: GoogleFonts.roboto(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-              color: Color.fromARGB(228, 255, 255, 255)),
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 19,
+          ),
         ),
-        centerTitle: true,
-        backgroundColor:
-            const Color.fromARGB(255, 32, 96, 214), // Matches bottom nav theme
-        elevation: 5,
       ),
       body: Padding(
         padding: const EdgeInsets.all(1.0),

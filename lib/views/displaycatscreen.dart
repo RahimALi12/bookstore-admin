@@ -14,16 +14,11 @@ class DisplayCatScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Categories",
-          style: GoogleFonts.roboto(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-              color: Color.fromARGB(228, 255, 255, 255)),
+          'Categories',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 19,
+          ),
         ),
-        centerTitle: true,
-        backgroundColor:
-            const Color.fromARGB(255, 32, 96, 214), // Matches bottom nav theme
-        elevation: 5,
       ),
       body: SingleChildScrollView(
         child: Padding(

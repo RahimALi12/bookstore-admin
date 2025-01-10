@@ -3,6 +3,7 @@
 import 'package:adminpanel/controller/authorcontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AddAuthorScreen extends StatefulWidget {
   const AddAuthorScreen({super.key});
@@ -18,7 +19,12 @@ class _AddAuthorScreenState extends State<AddAuthorScreen> {
     final con = Get.put(AuthorController());
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Author"),
+        title: Text(
+          "Add Author",
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 19,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),

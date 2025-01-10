@@ -39,7 +39,7 @@ class AuthorController extends GetxController {
         SnackbarUtil.showSnackbar(
           "Success",
           "Image Selected!",
-          type: 'success',
+          type: 'info',
         );
       }
     } catch (e) {
@@ -111,55 +111,6 @@ class AuthorController extends GetxController {
     super.onInit();
     fetchAuthors();
   }
-
-// Observable list of authors
-  // var authorsList = <Map<String, String>>[].obs;
-
-  // Future<void> fetchAuthors() async {
-  //   try {
-  //     isloading.value = true;
-  //     final QuerySnapshot data = await firebase.collection("authors").get();
-
-  //     authorsList.clear();
-  //     if (data.docs.isNotEmpty) {
-  //       List<Map<String, dynamic>> datalist = [];
-  //       for (var doc in data.docs) {
-  //         datalist.add(doc.data() as Map<String, dynamic>);
-  //       }
-  //       authorsdata.value = datalist;
-  //       authors.value = data.docs;
-  //       isloading.value = false;
-
-  //       print(authorsdata.value.toString());
-  //     }
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
-  // }
-
-  // Future<void> fetchAuthors() async {
-  //   try {
-  //     isloading.value = true;
-  //     final QuerySnapshot data = await firebase.collection("authors").get();
-
-  //     authorsList.clear();
-  //     if (data.docs.isNotEmpty) {
-  //       List<Map<String, dynamic>> datalist = [];
-  //       for (var doc in data.docs) {
-  //         datalist.add(doc.data() as Map<String, dynamic>);
-  //       }
-  //       authorsList
-  //           .assignAll(datalist); // Use this to update the list in the UI
-  //       isloading.value = false;
-
-  //       print("Authors List: ${authorsList.length}"); // Debug log
-  //     } else {
-  //       print("No authors found");
-  //     }
-  //   } catch (e) {
-  //     print("Error fetching authors: $e");
-  //   }
-  // }
 
   Future<void> fetchAuthors() async {
     try {
@@ -235,7 +186,7 @@ class AuthorController extends GetxController {
       SnackbarUtil.showSnackbar(
         "Success",
         "Author Added Successfully!....",
-        type: 'success',
+        type: 'info',
       );
 
       // Wait for the Snackbar to display before navigating
@@ -251,42 +202,6 @@ class AuthorController extends GetxController {
       );
     }
   }
-
-  // Future<void> editAuthor(
-  //     String autname, String authorId, String existingImageUrl) async {
-  //   // If a new image is selected, upload it
-
-  //   String? auname = autname;
-  //   final imageUrl = await uploadImagetocloudinary();
-
-  //   // Use existing image if no new image is uploaded
-  //   final String finalImagePath = imageUrl ?? existingImageUrl;
-
-  //   // Validation
-  //   if (auname.isEmpty) {
-  //     Get.snackbar("Error", "Please provide valid details");
-  //     return;
-  //   }
-
-  //   try {
-  //     // Reference to the specific product document
-  //     DocumentReference authorDoc = firebase.collection('authors').doc(autname);
-  //     // Prepare the data for update
-  //     Map<String, dynamic> updateData = {
-  //       'auname': autname,
-  //       'imagename': finalImagePath,
-  //     };
-
-  //     // Update the product details in Firebase
-  //     await authorDoc.update(updateData);
-
-  //     Get.snackbar("Success", "Author Updated!");
-  //     Get.back(closeOverlays: true); // Close the edit page
-  //   } catch (e) {
-  //     log(e.toString());
-  //     Get.snackbar("Error", "Failed to update author!");
-  //   }
-  // }
 
   Future<void> editAuthor(String authorId, String autname) async {
     if (autname.isEmpty) {
@@ -334,7 +249,7 @@ class AuthorController extends GetxController {
       SnackbarUtil.showSnackbar(
         'Success',
         'Author Details Updated Successfully',
-        type: 'success',
+        type: 'info',
       );
 
       await Future.delayed(
@@ -358,7 +273,7 @@ class AuthorController extends GetxController {
       SnackbarUtil.showSnackbar(
         "Success",
         "Author Deleted successfully....",
-        type: 'success',
+        type: 'error',
       );
     } catch (e) {
       SnackbarUtil.showSnackbar(

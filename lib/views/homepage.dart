@@ -1,6 +1,4 @@
-import 'package:adminpanel/controller/homecontroller.dart';
 import 'package:adminpanel/views/addcategoryscreen.dart';
-import 'package:adminpanel/views/editauthorpage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:adminpanel/controller/categorycontroller.dart';
@@ -32,16 +30,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: Text(
-          "Admin Dashboard",
-          style: GoogleFonts.roboto(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-              color: Color.fromARGB(228, 255, 255, 255)),
+          'Admin Panel',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 19,
+            color: Colors.white,
+          ),
         ),
-        centerTitle: true,
-        elevation: 4,
         backgroundColor: const Color.fromARGB(255, 32, 96, 214),
       ),
       body: Padding(
@@ -58,14 +53,14 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     _buildSummaryCard(
                         title: "Categories",
                         count: categoryController.categories.length,
-                        color: Colors.blue),
-                    SizedBox(
+                        color: const Color.fromARGB(255, 32, 96, 214)),
+                    const SizedBox(
                       width: 10,
                     ),
                     _buildSummaryCard(
                         title: "Authors",
                         count: authorController.authorsList.length,
-                        color: Colors.green),
+                        color: const Color.fromARGB(255, 32, 96, 214)),
                     // _buildSummaryCard(
                     //     title: "Total Posts", count: 128, color: Colors.orange),
                   ],
@@ -78,7 +73,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
               Obx(() {
                 return Container(
                   margin: const EdgeInsets.symmetric(vertical: 10),
-                  height: 50,
+                  height: 35,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: categoryController.categorydata.length,
@@ -90,18 +85,21 @@ class _AdminHomePageState extends State<AdminHomePage> {
                               .fetchdata(); // Load products for selected category
                         },
                         child: Container(
+                          width: 100,
                           margin: const EdgeInsets.symmetric(horizontal: 10),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 10),
                           decoration: BoxDecoration(
-                            color: Colors.blueGrey.shade200,
+                            color: const Color.fromARGB(255, 32, 96, 214),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Center(
                             child: Text(
                               category['name'] ?? 'Category',
                               style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
+                                fontSize: 12,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -110,12 +108,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   ),
                 );
               }),
-              SizedBox(
-                height: 10,
+              const SizedBox(
+                height: 20,
               ),
 
               // Authors Section
               _buildSectionTitle("Authors"),
+              Divider(),
               Obx(() {
                 if (authorController.isloading.value) {
                   return const Center(child: CircularProgressIndicator());
@@ -139,36 +138,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
           ),
         ),
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            heroTag: "addCategory",
-            backgroundColor: const Color.fromARGB(255, 32, 96, 214),
-            onPressed: () {
-              Get.to(const AddCategoryScreen());
-            },
-            child: const Icon(
-              Icons.category,
-              color: Colors.white,
-            ),
-            tooltip: 'Add Category',
-          ),
-          const SizedBox(height: 10),
-          FloatingActionButton(
-            heroTag: "addAuthor",
-            backgroundColor: const Color.fromARGB(255, 32, 96, 214),
-            onPressed: () {
-              Get.to(const AddAuthorScreen());
-            },
-            child: const Icon(
-              Icons.person_add,
-              color: Colors.white,
-            ),
-            tooltip: 'Add Author',
-          ),
-        ],
-      ),
     );
   }
 
@@ -179,25 +148,27 @@ class _AdminHomePageState extends State<AdminHomePage> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 3, 46, 81),
+          color: const Color.fromARGB(255, 32, 96, 214),
           borderRadius: BorderRadius.circular(12),
+          // ignore: deprecated_member_use
           border: Border.all(color: color.withOpacity(0.5)),
         ),
         child: Column(
           children: [
             Text(
               count.toString(),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: color,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               title,
               style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14, color: Color.fromARGB(221, 238, 233, 233)),
+                  fontSize: 14,
+                  color: const Color.fromARGB(221, 238, 233, 233)),
             ),
           ],
         ),
@@ -210,9 +181,9 @@ class _AdminHomePageState extends State<AdminHomePage> {
     return Text(
       title,
       style: GoogleFonts.plusJakartaSans(
-        fontSize: 14,
+        fontSize: 19,
         fontWeight: FontWeight.bold,
-        color: Colors.black87,
+        color: const Color.fromARGB(255, 32, 96, 214),
       ),
     );
   }
@@ -272,8 +243,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
             child: Text(
               author['auname'] ?? "Unknown Author",
               style: GoogleFonts.plusJakartaSans(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
                   color: Colors.black87),
             ),
           ),

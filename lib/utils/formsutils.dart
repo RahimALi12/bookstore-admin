@@ -144,8 +144,9 @@ InputDecoration inputFieldDecoration(String hintText) {
   return InputDecoration(
     labelText: hintText,
     labelStyle: TextStyle(color: Colors.grey.shade400), // Default label color
-    hintStyle:
-        TextStyle(color: Colors.grey.shade400), // Default hint text color
+    hintStyle: TextStyle(
+        color:
+            const Color.fromARGB(255, 20, 85, 207)), // Default hint text color
     contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),

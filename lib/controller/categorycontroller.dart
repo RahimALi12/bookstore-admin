@@ -81,7 +81,7 @@ class CategoryController extends GetxController {
         SnackbarUtil.showSnackbar(
           "Success",
           "Category Created Successfully!!!",
-          type: 'success',
+          type: 'info',
         );
 
         categorycontroller.clear(); // Clear the text field
@@ -127,7 +127,7 @@ class CategoryController extends GetxController {
         SnackbarUtil.showSnackbar(
           "Success",
           "Category Updated Successfully!",
-          type: 'success',
+          type: 'info',
         );
       }
     } catch (e) {
@@ -147,7 +147,7 @@ class CategoryController extends GetxController {
       SnackbarUtil.showSnackbar(
         "Success",
         "Category Deleted Successfully!",
-        type: 'success',
+        type: 'error',
       );
     } catch (e) {
       SnackbarUtil.showSnackbar(
