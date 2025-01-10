@@ -1,4 +1,5 @@
 import 'package:adminpanel/controller/authorcontroller.dart';
+import 'package:adminpanel/controller/categorycontroller.dart';
 import 'package:adminpanel/controller/productcontroller.dart';
 import 'package:adminpanel/utils/formsutils.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AddProductScreen extends StatefulWidget {
-  const AddProductScreen({super.key, required this.catname});
-  final String catname;
+  const AddProductScreen({super.key});
 
   @override
   State<AddProductScreen> createState() => _AddProductScreenState();
@@ -17,6 +17,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   void initState() {
     super.initState();
+    final catcontroller = Get.put(CategoryController());
+    if (catcontroller.categorydata.isEmpty) {
+      catcontroller.fetchdata();
+    }
     final authcontroller = Get.put(AuthorController());
     if (authcontroller.authorsList.isEmpty) {
       authcontroller.fetchAuthors();
@@ -27,6 +31,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget build(BuildContext context) {
     final con = Get.put(ProductController());
     final authcontroller = Get.put(AuthorController());
+    final catcontroller = Get.put(CategoryController());
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -43,10 +48,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            Text(
-              widget.catname,
-              style: headingTextStyle(),
-            ),
+            // Text(
+            //   widget.catname,
+            //   style: headingTextStyle(),
+            // ),
             const SizedBox(height: 15),
             _buildTextField(
                 controller: con.pnameController,
@@ -73,27 +78,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 return const Text("No authors available");
               }
 
-              // return DropdownButton<String>(
-              //   hint: const Text('Select Author'),
-              //   value: con.selectedAuthor.value.isNotEmpty
-              //       ? con.selectedAuthor.value
-              //       : null,
-              //   onChanged: (selectedAuthor) {
-              //     con.selectedAuthor.value = selectedAuthor ?? '';
-              //   },
-              //   items: authcontroller.authorsList.map((author) {
-              //     return DropdownMenuItem<String>(
-              //       value: author['auname'],
-              //       child: Row(
-              //         children: [
-              //           const SizedBox(width: 10),
-              //           Text(author['auname'] ?? "Default Author Name"),
-              //         ],
-              //       ),
-              //     );
-              //   }).toList(),
-              // );
-              return dropdownButtonStyle(
+              return AuthordropdownButtonStyle(
                 hintText: 'Select Author',
                 selectedValue: con.selectedAuthor.value.isNotEmpty
                     ? con.selectedAuthor.value
@@ -102,6 +87,27 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   con.selectedAuthor.value = selectedAuthor ?? '';
                 },
                 authorsList: authcontroller.authorsList,
+              );
+            }),
+            const SizedBox(height: 20),
+            Obx(() {
+              if (catcontroller.isloading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (catcontroller.categorydata.isEmpty) {
+                return const Text("No Category available");
+              }
+
+              return CategorydropdownButtonStyle(
+                hintText: 'Select Category',
+                selectedValue: con.selectedCategory.value.isNotEmpty
+                    ? con.selectedCategory.value
+                    : null,
+                onChanged: (selectedCategory) {
+                  con.selectedCategory.value = selectedCategory ?? '';
+                },
+                categorydata: catcontroller.categorydata,
               );
             }),
             const SizedBox(height: 20),
@@ -147,7 +153,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                con.addProduct(widget.catname);
+                con.addProduct();
               },
               style: elevatedButtonStyle(),
               child: Text(

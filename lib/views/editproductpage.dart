@@ -1,17 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:adminpanel/controller/productcontroller.dart';
-import 'package:adminpanel/utils/formsutils.dart';
+// import 'package:adminpanel/utils/formsutils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditProductPage extends StatefulWidget {
-  final String catname;
+  // final String catname;
   final String productId;
 
-  const EditProductPage(
-      {super.key, required this.catname, required this.productId});
+  const EditProductPage({super.key, required this.productId});
 
   @override
   _EditProductPageState createState() => _EditProductPageState();
@@ -27,21 +26,21 @@ class _EditProductPageState extends State<EditProductPage> {
   // For image management
   String? selectedAuthor; // To store selected author
   List<String> authors = []; // List of authors (replace with your source)
+  String? selectedCategory;
+  List<String> categories = [];
   String imageUrl = "";
 
   @override
   void initState() {
     super.initState();
     _loadProductDetails();
-
+    _loadCategories();
     _loadAuthors();
   }
 
   // // Load product details to pre-fill the form
   Future<void> _loadProductDetails() async {
     var productDoc = await FirebaseFirestore.instance
-        .collection('categories')
-        .doc(widget.catname)
         .collection('products')
         .doc(widget.productId)
         .get();
@@ -52,6 +51,7 @@ class _EditProductPageState extends State<EditProductPage> {
     pdescController.text = productDoc['pdesc'];
     imageUrl = productDoc['imagename']; // Get the existing image URL
     selectedAuthor = productDoc['author']; // Set existing author
+    selectedCategory = productDoc['category'];
     setState(() {}); // Refresh the UI
   }
 
@@ -62,6 +62,23 @@ class _EditProductPageState extends State<EditProductPage> {
     authors =
         authorsSnapshot.docs.map((doc) => doc['auname'].toString()).toList();
     setState(() {});
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      // Fetch categories from Firestore
+      var categoriesSnapshot =
+          await FirebaseFirestore.instance.collection('categories').get();
+      categories =
+          categoriesSnapshot.docs.map((doc) => doc['name'].toString()).toList();
+
+      // Debugging: Check what data is being fetched
+      print('Fetched categories: $categories');
+
+      setState(() {});
+    } catch (e) {
+      print('Error loading categories: $e');
+    }
   }
 
   @override
@@ -135,7 +152,13 @@ class _EditProductPageState extends State<EditProductPage> {
             authors.isEmpty
                 ? CircularProgressIndicator()
                 : _buildAuthorDropdown(),
-            SizedBox(height: 16.0),
+            SizedBox(height: 1.0),
+
+            // Category Dropdown
+            categories.isEmpty
+                ? CircularProgressIndicator()
+                : _buildCategoryDropdown(),
+            SizedBox(height: 1.0),
 
             // Update Button
             ElevatedButton(
@@ -144,8 +167,8 @@ class _EditProductPageState extends State<EditProductPage> {
                   final name = pnameController.text.trim();
                   final desc = pdescController.text.trim();
                   final quan = double.tryParse(pquantityController.text.trim());
-                  con.editProduct(widget.catname, widget.productId, name, price,
-                      quan, desc, selectedAuthor ?? '');
+                  con.editProduct(widget.productId, name, price, quan, desc,
+                      selectedAuthor ?? '', selectedCategory ?? '');
                 },
                 style: ElevatedButton.styleFrom(
                   iconColor: Colors.deepOrange,
@@ -187,6 +210,25 @@ class _EditProductPageState extends State<EditProductPage> {
       onChanged: (value) {
         setState(() {
           selectedAuthor = value;
+        });
+      },
+    );
+  }
+
+  Widget _buildCategoryDropdown() {
+    return DropdownButton<String>(
+      value: selectedCategory,
+      hint: Text('Select Category'),
+      isExpanded: true,
+      items: categories.map((category) {
+        return DropdownMenuItem<String>(
+          value: category,
+          child: Text(category),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          selectedCategory = value;
         });
       },
     );

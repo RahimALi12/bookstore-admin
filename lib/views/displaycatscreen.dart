@@ -1,6 +1,5 @@
 import 'package:adminpanel/controller/categorycontroller.dart';
 import 'package:adminpanel/views/addcategoryscreen.dart';
-import 'package:adminpanel/views/displayproductscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -89,15 +88,15 @@ class DisplayCatScreen extends StatelessWidget {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            IconButton(
-                              onPressed: () {
-                                Get.to(
-                                    ProductListPage(catname: category['name']));
-                              },
-                              icon: const Icon(Icons.remove_red_eye,
-                                  color: Colors.green),
-                              tooltip: "View Products",
-                            ),
+                            // IconButton(
+                            //   onPressed: () {
+                            //     Get.to(
+                            //         ProductListPage(catname: category['name']));
+                            //   },
+                            //   icon: const Icon(Icons.remove_red_eye,
+                            //       color: Colors.green),
+                            //   tooltip: "View Products",
+                            // ),
                             IconButton(
                               onPressed: () async {
                                 final newName = await showDialog(

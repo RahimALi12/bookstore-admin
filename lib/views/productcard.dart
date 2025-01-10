@@ -14,7 +14,7 @@ class ProductCard extends StatelessWidget {
     required this.pname,
     required this.pprice,
     required this.pquantity,
-    required this.catname,
+    // required this.catname,
     required this.pdesc,
     required this.imagename, // Image URL
   });
@@ -23,7 +23,7 @@ class ProductCard extends StatelessWidget {
   final String pname;
   final double pprice;
   final double pquantity;
-  final String catname;
+  // final String catname;
   final String pdesc;
   final String imagename; // Image URL
 
@@ -80,7 +80,7 @@ class ProductCard extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => EditProductPage(
-                    catname: catname,
+                    // catname: catname,
                     productId: productId,
                   ),
                 ),
@@ -119,13 +119,13 @@ class ProductCard extends StatelessWidget {
               },
               child: Text('Cancel'),
             ),
-            TextButton(
-              onPressed: () async {
-                await deleteProduct(catname, productId);
-                Navigator.pop(context);
-              },
-              child: Text('Delete'),
-            ),
+            // TextButton(
+            //   onPressed: () async {
+            //     await deleteProduct(productId);
+            //     Navigator.pop(context);
+            //   },
+            //   child: Text('Delete'),
+            // ),
           ],
         );
       },

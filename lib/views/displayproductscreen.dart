@@ -7,9 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 class ProductListPage extends StatelessWidget {
-  const ProductListPage({super.key, required this.catname});
-
-  final String catname; // Category name passed to this page
+  const ProductListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,17 +16,13 @@ class ProductListPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {
-            Get.to(AddProductScreen(catname: catname));
+            Get.to(AddProductScreen());
           }),
       appBar: AppBar(
-        title: Text('$catname Products'),
+        title: Text('Products'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('categories')
-            .doc(catname)
-            .collection('products')
-            .snapshots(),
+        stream: FirebaseFirestore.instance.collection('products').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -62,7 +56,7 @@ class ProductListPage extends StatelessWidget {
                 pname: pname ?? 'Unknown',
                 pprice: pprice ?? 0.0,
                 pquantity: pquantity ?? 0.0,
-                catname: catname,
+                // catname: catname,
                 pdesc: pdesc ?? 'No description',
                 imagename: imagename ?? '', // Default to empty string if null
               );

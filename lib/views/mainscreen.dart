@@ -1,6 +1,7 @@
 import 'package:adminpanel/views/adminprofile.dart';
 import 'package:adminpanel/views/displayautscreen.dart';
 import 'package:adminpanel/views/displaycatscreen.dart';
+import 'package:adminpanel/views/displayproductscreen.dart';
 import 'package:adminpanel/views/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart'; // Profile Screen
@@ -18,9 +19,12 @@ class _MainScreenState extends State<MainScreen> {
   // Pages list
   final List<Widget> _pages = [
     AdminHomePage(),
+    const ProductListPage(),
+
     const DisplayCatScreen(),
     const AuthorListScreen(),
     const AdminProfile(),
+
     // const (),
   ];
 
@@ -69,6 +73,7 @@ class _MainScreenState extends State<MainScreen> {
         },
         items: const [
           Icon(Icons.home, size: 23, color: Colors.white),
+          Icon(Icons.menu_book_sharp, size: 23, color: Colors.white),
           Icon(Icons.category, size: 23, color: Colors.white),
           Icon(Icons.groups_2, size: 23, color: Colors.white),
           Icon(Icons.person, size: 23, color: Colors.white),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-DropdownButton<String> dropdownButtonStyle({
+DropdownButton<String> AuthordropdownButtonStyle({
   required String hintText,
   required String? selectedValue,
   required Function(String?) onChanged,
@@ -37,6 +37,56 @@ DropdownButton<String> dropdownButtonStyle({
             children: [
               Text(
                 author['auname'] ?? "Default Author Name",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87, // Text color for each item
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }).toList(),
+  );
+}
+
+DropdownButton<String> CategorydropdownButtonStyle({
+  required String hintText,
+  required String? selectedValue,
+  required Function(String?) onChanged,
+  required List<Map<String, dynamic>> categorydata,
+}) {
+  return DropdownButton<String>(
+    hint: Text(hintText),
+    value: selectedValue?.isNotEmpty ?? false ? selectedValue : null,
+    onChanged: onChanged,
+    icon: const Icon(Icons.arrow_drop_down,
+        color: Colors.blue), // Custom icon color
+    isExpanded: true, // Make the dropdown take full width
+    style: TextStyle(
+      color: Colors.black87, // Text color for the selected value
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+    ),
+    underline: Container(
+      height: 1,
+      color: Colors.blue.shade300, // Border color below the dropdown
+    ),
+    // decoration: BoxDecoration(
+    //   borderRadius: BorderRadius.circular(12),
+    //   border: Border.all(color: Colors.blue.shade300, width: 1), // Border around the dropdown
+    //   color: Colors.white,
+    // ),
+    items: categorydata.map((category) {
+      return DropdownMenuItem<String>(
+        value: category['name'],
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          child: Row(
+            children: [
+              Text(
+                category['name'] ?? "Default Category Name",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,

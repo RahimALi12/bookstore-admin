@@ -38,21 +38,21 @@ class AdminHomePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Summary Section
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     _buildSummaryCard(
-              //         title: "Categories",
-              //         count: categoryController.categories.length,
-              //         color: Colors.blue),
-              //     _buildSummaryCard(
-              //         title: "Authors",
-              //         count: authorController.authorsList.length,
-              //         color: Colors.green),
-              //     _buildSummaryCard(
-              //         title: "Total Posts", count: 128, color: Colors.orange),
-              //   ],
-              // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildSummaryCard(
+                      title: "Categories",
+                      count: categoryController.categories.length,
+                      color: Colors.blue),
+                  _buildSummaryCard(
+                      title: "Authors",
+                      count: authorController.authorsList.length,
+                      color: Colors.green),
+                  _buildSummaryCard(
+                      title: "Total Posts", count: 128, color: Colors.orange),
+                ],
+              ),
               const SizedBox(height: 20),
 
               // Categories Section
