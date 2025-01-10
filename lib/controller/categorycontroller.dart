@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CategoryController extends GetxController {
+  var categoryData =
+      <Map<String, dynamic>>[].obs; // To store fetched categories
   final TextEditingController categorycontroller = TextEditingController();
   var categories = <DocumentSnapshot>[].obs;
   final FirebaseFirestore firebase = FirebaseFirestore.instance;
@@ -21,6 +23,29 @@ class CategoryController extends GetxController {
   void onInit() {
     super.onInit();
     fetchdata();
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      isloading.value = true; // Start loading
+      final QuerySnapshot categorySnapshot =
+          await firebase.collection("categories").get();
+
+      if (categorySnapshot.docs.isNotEmpty) {
+        List<Map<String, dynamic>> categoryList = [];
+        for (var categoryDoc in categorySnapshot.docs) {
+          var categoryData = categoryDoc.data() as Map<String, dynamic>;
+          categoryData['id'] =
+              categoryDoc.id; // Add the category ID to the data
+          categoryList.add(categoryData);
+        }
+        categoryData.value = categoryList; // Assign fetched categories
+      }
+      isloading.value = false; // Stop loading
+    } catch (e) {
+      isloading.value = false; // Stop loading in case of error
+      print("Error fetching categories: ${e.toString()}");
+    }
   }
 
   Future<void> fetchdata() async {

@@ -1,3 +1,5 @@
+import 'package:adminpanel/views/homepage.dart';
+import 'package:adminpanel/views/loginscreen.dart';
 import 'package:adminpanel/views/mainscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,18 +22,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/admin',
-      getPages: [
-        // Define all the routes here
-        // GetPage(
-        //   name: '/login',
-        //   page: () => AdminLoginScreen(),
-        // ),
-        GetPage(
-          name: '/admin',
-          page: () => MainScreen(),
-        ),
-      ],
+      // home: AdminLoginScreen(),
+      home: MainScreen(),
     );
   }
 }

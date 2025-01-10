@@ -1,3 +1,4 @@
+import 'package:adminpanel/controller/homecontroller.dart';
 import 'package:adminpanel/views/addcategoryscreen.dart';
 import 'package:adminpanel/views/editauthorpage.dart';
 import 'package:flutter/material.dart';
@@ -7,19 +8,31 @@ import 'package:adminpanel/controller/authorcontroller.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'createauthor.dart';
 
-class AdminHomePage extends StatelessWidget {
-  AdminHomePage({super.key});
+class AdminHomePage extends StatefulWidget {
+  const AdminHomePage({super.key});
 
+  @override
+  State<AdminHomePage> createState() => _AdminHomePageState();
+}
+
+class _AdminHomePageState extends State<AdminHomePage> {
   final categoryController = Get.put(CategoryController());
+
   final authorController = Get.put(AuthorController());
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+
     categoryController.fetchdata();
     authorController.fetchAuthors();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           "Admin Dashboard",
           style: GoogleFonts.roboto(
@@ -38,46 +51,68 @@ class AdminHomePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Summary Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildSummaryCard(
-                      title: "Categories",
-                      count: categoryController.categories.length,
-                      color: Colors.blue),
-                  _buildSummaryCard(
-                      title: "Authors",
-                      count: authorController.authorsList.length,
-                      color: Colors.green),
-                  _buildSummaryCard(
-                      title: "Total Posts", count: 128, color: Colors.orange),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Categories Section
-              _buildSectionTitle("Categories"),
               Obx(() {
-                if (categoryController.isloading.value) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (categoryController.categories.isEmpty) {
-                  return const Text(
-                    "No categories available",
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  );
-                }
-
-                return Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: categoryController.categories
-                      .map((category) => _buildCategoryCard(category))
-                      .toList(),
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildSummaryCard(
+                        title: "Categories",
+                        count: categoryController.categories.length,
+                        color: Colors.blue),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    _buildSummaryCard(
+                        title: "Authors",
+                        count: authorController.authorsList.length,
+                        color: Colors.green),
+                    // _buildSummaryCard(
+                    //     title: "Total Posts", count: 128, color: Colors.orange),
+                  ],
                 );
               }),
-              const SizedBox(height: 30),
+
+              const SizedBox(height: 20),
+
+              // Categories Horizontal Scroll
+              Obx(() {
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  height: 50,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categoryController.categorydata.length,
+                    itemBuilder: (context, index) {
+                      var category = categoryController.categorydata[index];
+                      return GestureDetector(
+                        onTap: () {
+                          categoryController
+                              .fetchdata(); // Load products for selected category
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.shade200,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Text(
+                              category['name'] ?? 'Category',
+                              style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }),
+              SizedBox(
+                height: 10,
+              ),
 
               // Authors Section
               _buildSectionTitle("Authors"),
@@ -87,9 +122,10 @@ class AdminHomePage extends StatelessWidget {
                 }
 
                 if (authorController.authorsList.isEmpty) {
-                  return const Text(
+                  return Text(
                     "No authors available",
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13, color: Colors.grey),
                   );
                 }
 
@@ -143,7 +179,7 @@ class AdminHomePage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: const Color.fromARGB(255, 3, 46, 81),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: color.withOpacity(0.5)),
         ),
@@ -160,7 +196,8 @@ class AdminHomePage extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               title,
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 14, color: Color.fromARGB(221, 238, 233, 233)),
             ),
           ],
         ),
@@ -172,8 +209,8 @@ class AdminHomePage extends StatelessWidget {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 20,
+      style: GoogleFonts.plusJakartaSans(
+        fontSize: 14,
         fontWeight: FontWeight.bold,
         color: Colors.black87,
       ),
@@ -197,7 +234,7 @@ class AdminHomePage extends StatelessWidget {
       ),
       child: Text(
         category['name'] ?? "Unnamed Category",
-        style: const TextStyle(fontSize: 16, color: Colors.black87),
+        style: GoogleFonts.plusJakartaSans(fontSize: 13, color: Colors.black87),
       ),
     );
   }
@@ -234,20 +271,11 @@ class AdminHomePage extends StatelessWidget {
           Expanded(
             child: Text(
               author['auname'] ?? "Unknown Author",
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: Colors.black87),
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.blue),
-            onPressed: () {
-              Get.to(() => EditAuthorPage(authorId: author['id']));
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () {
-              // Delete Author
-            },
           ),
         ],
       ),
