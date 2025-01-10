@@ -25,6 +25,7 @@ class ProductController extends GetxController {
   var selectedFileName = ''.obs;
 
   var selectedAuthor = ''.obs; // Store selected author
+  var selectedCategory = ''.obs; // Store selected category
 
   // Pick Image from gallery
   Future<void> pickImage() async {
@@ -147,11 +148,19 @@ class ProductController extends GetxController {
     selectedFileName.value = '';
   }
 
-  Future<void> addProduct(String catname) async {
+  Future<void> addProduct() async {
     if (selectedAuthor.value.isEmpty) {
       SnackbarUtil.showSnackbar(
         "Error",
         "Please Select an Author",
+        type: 'error',
+      );
+      return;
+    }
+    if (selectedCategory.value.isEmpty) {
+      SnackbarUtil.showSnackbar(
+        "Error",
+        "Select Book Category",
         type: 'error',
       );
       return;
@@ -174,11 +183,7 @@ class ProductController extends GetxController {
     double? quantity = double.tryParse(pquantityController.text);
 
     // Validate inputs
-    if (catname.isEmpty ||
-        pname.isEmpty ||
-        pdesc.isEmpty ||
-        price == null ||
-        quantity == null) {
+    if (pname.isEmpty || pdesc.isEmpty || price == null || quantity == null) {
       SnackbarUtil.showSnackbar(
         "Error",
         "Please Provide Valid Details",
@@ -189,8 +194,7 @@ class ProductController extends GetxController {
 
     try {
       // Reference to product collection in Firebase
-      CollectionReference productCollection =
-          firebase.collection('categories').doc(catname).collection('products');
+      CollectionReference productCollection = firebase.collection('products');
 
       // Add product data to Firebase
       await productCollection.add({
@@ -199,10 +203,10 @@ class ProductController extends GetxController {
         'pquantity': quantity,
         'pdesc': pdesc,
         'author': selectedAuthor.value, // Add selected author
+        'category': selectedCategory.value,
         'imagename':
             finalImagePath, // Use either uploaded image URL or default path
       });
-
       fetchData();
 
       // Show success message and navigate back
@@ -211,6 +215,7 @@ class ProductController extends GetxController {
         "Product Added Successfully",
         type: 'success',
       );
+
       await Future.delayed(
           Duration(seconds: 2)); // Snackbar will display for 2 seconds
 
@@ -225,13 +230,13 @@ class ProductController extends GetxController {
   }
 
   Future<void> editProduct(
-      String cattname,
       String producttId,
       String proName,
       double? pprice,
       double? pquantity,
       String pdescc,
-      String selectedAuthor) async {
+      String selectedAuthor,
+      String selectedCategory) async {
     // Collect form data
     double? price = pprice;
     double? quantity = pquantity;
@@ -243,7 +248,8 @@ class ProductController extends GetxController {
         pdesc.isEmpty ||
         price == null ||
         quantity == null ||
-        selectedAuthor.isEmpty) {
+        selectedAuthor.isEmpty ||
+        selectedCategory.isEmpty) {
       SnackbarUtil.showSnackbar(
         "Error",
         "Please Provide Valid Details",
@@ -254,17 +260,18 @@ class ProductController extends GetxController {
 
     try {
       // Reference to the specific product document
-      DocumentReference productDoc = firebase
-          .collection('categories')
-          .doc(cattname)
-          .collection('products')
-          .doc(producttId);
+      DocumentReference productDoc =
+          firebase.collection('products').doc(producttId);
       final authorSnapshot = await productDoc.get();
       final existingData = authorSnapshot.data() as Map<String, dynamic>;
+      final categorySnapshot = await productDoc.get();
+      final existingCat = categorySnapshot.data() as Map<String, dynamic>;
       final existingImageUrl = existingData['imagename'] ?? "";
 
       final existingAuthor =
           existingData['author'] ?? ""; // Get the current author
+
+      final exisitingCategory = existingCat['category'] ?? "";
 
       // Upload the image if a new one is picked
       final imageUrl = await uploadImagetocloudinary();
@@ -277,7 +284,8 @@ class ProductController extends GetxController {
         'author': selectedAuthor.isNotEmpty
             ? selectedAuthor
             : existingAuthor, // Update author
-
+        'category':
+            selectedCategory.isNotEmpty ? selectedCategory : exisitingCategory,
         'imagename': imageUrl ?? existingImageUrl,
       };
 
@@ -305,17 +313,13 @@ class ProductController extends GetxController {
     }
   }
 
-  Future<void> deleteProduct(String catname, String productId) async {
+  Future<void> deleteProduct(String productId) async {
     try {
       // Reference to the specific product document
-      DocumentReference productDoc = firebase
-          .collection('categories')
-          .doc(catname)
-          .collection('products')
-          .doc(productId);
-
+      await firebase.collection('products').doc(productId).delete();
+      fetchData();
       // Delete the product
-      await productDoc.delete();
+
       SnackbarUtil.showSnackbar(
         "Success",
         "Product Deleted Successfully!",
